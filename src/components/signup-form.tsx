@@ -1,48 +1,49 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import Link from "next/link"
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import Link from "next/link";
+import { useState } from "react";
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
-  })
+    image: "", // ✅ add this
+  });
 
   const handleChange = (e: any) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value })
-  }
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
 
   const handleSubmit = async (e: any) => {
-    e.preventDefault()
+    e.preventDefault();
 
     // ✅ simple validation
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match ❌")
-      return
+      alert("Passwords do not match ❌");
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
 
     try {
       const res = await fetch("/api/auth/sign-up/email", {
@@ -55,18 +56,19 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
           name: formData.name,
           email: formData.email,
           password: formData.password,
+          image: formData.image, 
         }),
-      })
+      });
 
-      const data = await res.json()
+      const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || "Signup failed")
+        throw new Error(data.message || "Signup failed");
       }
 
-      console.log("Signup success:", data)
+      console.log("Signup success:", data);
 
-      alert("✅ Account created successfully!")
+      alert("✅ Account created successfully!");
 
       // ✅ reset form
       setFormData({
@@ -74,18 +76,18 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
         email: "",
         password: "",
         confirmPassword: "",
-      })
+        image: "",
+      });
 
       // 👉 redirect
       // window.location.href = "/login"
-
     } catch (err: any) {
-      console.error(err)
-      alert(err.message)
+      console.error(err);
+      alert(err.message);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -100,7 +102,6 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
         <CardContent>
           <form onSubmit={handleSubmit}>
             <FieldGroup>
-
               {/* Name */}
               <Field>
                 <FieldLabel htmlFor="name">Full Name</FieldLabel>
@@ -127,6 +128,21 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                 />
                 <FieldDescription>
                   We&apos;ll use this to contact you.
+                </FieldDescription>
+              </Field>
+
+              {/* Profile Image URL */}
+              <Field>
+                <FieldLabel htmlFor="image">Profile Image</FieldLabel>
+                <Input
+                  id="image"
+                  type="text"
+                  placeholder="https://example.com/image.jpg"
+                  value={formData.image}
+                  onChange={handleChange}
+                />
+                <FieldDescription>
+                  Paste your profile image URL
                 </FieldDescription>
               </Field>
 
@@ -167,15 +183,13 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                 </Button>
 
                 <FieldDescription className="px-6 text-center">
-                  Already have an account?{" "}
-                  <Link href="/login">Login</Link>
+                  Already have an account? <Link href="/login">Login</Link>
                 </FieldDescription>
               </Field>
-
             </FieldGroup>
           </form>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
