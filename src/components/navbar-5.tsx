@@ -113,6 +113,9 @@ export const Navbar = () => {
                 <Link href="/dashboard/create-event">
                   <Button>Create Event</Button>
                 </Link>
+                <Link href="/login">
+                  <Button>Login</Button>
+                </Link>
 
                 {/* 🔹 Profile Avatar Dropdown */}
                 <DropdownMenu>
