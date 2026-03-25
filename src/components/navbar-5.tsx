@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { MenuIcon, LogOut, User } from "lucide-react";
+import { LogOut, MenuIcon, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -8,8 +9,8 @@ import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
   NavigationMenuItem,
-  NavigationMenuList,
   NavigationMenuLink,
+  NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 
@@ -28,19 +29,32 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-// 🔹 Fake auth state (replace with real auth later)
-const isLoggedIn = true;
+import { authClient } from "@/lib/auth-client";
+import { useEffect, useState } from "react";
 
 export const Navbar = () => {
+  const [session, setSession] = useState<any>(null);
+
+  useEffect(() => {
+    const getSession = async () => {
+      const sessionData = await authClient.getSession();
+      setSession(sessionData);
+    };
+
+    getSession();
+  }, []);
+
+  const isLoggedIn = session?.data?.user;
+  const user = session?.data?.user;
+
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm">
       <div className="container mx-auto px-4">
         <nav className="flex items-center justify-between py-4">
-
           {/* 🔹 Logo */}
           <Link href="/" className="flex items-center gap-2">
             <Image
-              src="/logo.avif" // replace with your logo
+              src="/logo.avif"
               alt="Planora"
               width={32}
               height={32}
@@ -72,14 +86,21 @@ export const Navbar = () => {
                 <>
                   <NavigationMenuItem>
                     <NavigationMenuLink asChild>
-                      <Link href="/login" className={navigationMenuTriggerStyle()}>
+                      <Link
+                        href="/login"
+                        className={navigationMenuTriggerStyle()}
+                      >
                         Login
                       </Link>
                     </NavigationMenuLink>
                   </NavigationMenuItem>
+
                   <NavigationMenuItem>
                     <NavigationMenuLink asChild>
-                      <Link href="/signup" className={navigationMenuTriggerStyle()}>
+                      <Link
+                        href="/signup"
+                        className={navigationMenuTriggerStyle()}
+                      >
                         Signup
                       </Link>
                     </NavigationMenuLink>
@@ -88,7 +109,10 @@ export const Navbar = () => {
               ) : (
                 <NavigationMenuItem>
                   <NavigationMenuLink asChild>
-                    <Link href="/dashboard" className={navigationMenuTriggerStyle()}>
+                    <Link
+                      href="/dashboard"
+                      className={navigationMenuTriggerStyle()}
+                    >
                       Dashboard
                     </Link>
                   </NavigationMenuLink>
@@ -109,80 +133,107 @@ export const Navbar = () => {
                 </Link>
               </>
             ) : (
-              <>
-                <Link href="/dashboard/create-event">
-                  <Button>Create Event</Button>
-                </Link>
-                <Link href="/login">
-                  <Button>Login</Button>
-                </Link>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  {/* ✅ FIX: use button instead of div */}
+                  <button className="w-9 h-9 rounded-full overflow-hidden border">
+                    <Image
+                      src={user?.image || "/default-avatar.png"} // ✅ fallback
+                      alt="Profile"
+                      width={36}
+                      height={36}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                </DropdownMenuTrigger>
 
-                {/* 🔹 Profile Avatar Dropdown */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <div className="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center cursor-pointer">
-                      👤
-                    </div>
-                  </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48 z-50">
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile">
+                      <User className="mr-2 h-4 w-4" /> My Profile
+                    </Link>
+                  </DropdownMenuItem>
 
-                  <DropdownMenuContent align="end" className="w-48">
-                    <DropdownMenuItem asChild>
-                      <Link href="/dashboard/profile">
-                        <User className="mr-2 h-4 w-4" /> My Profile
-                      </Link>
-                    </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/dashboard">
+                      <User className="mr-2 h-4 w-4" /> Dashboard
+                    </Link>
+                  </DropdownMenuItem>
 
-                    <DropdownMenuItem asChild>
-                      <Link href="/dashboard/my-events">
-                        <User className="mr-2 h-4 w-4" /> My Events
-                      </Link>
-                    </DropdownMenuItem>
-
-                    <DropdownMenuItem>
-                      <button className="flex items-center w-full">
-                        <LogOut className="mr-2 h-4 w-4" /> Logout
-                      </button>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </>
+                  <DropdownMenuItem>
+                    <button className="flex items-center w-full">
+                      <LogOut className="mr-2 h-4 w-4" /> Logout
+                    </button>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
           </div>
 
-          {/* 🔹 Mobile Menu */}
-          <Sheet>
-            <SheetTrigger asChild className="lg:hidden">
-              <Button variant="outline" size="icon">
-                <MenuIcon className="h-5 w-5" />
-              </Button>
-            </SheetTrigger>
+          {/* 🔹 Mobile Section */}
+          <div className="lg:hidden flex items-center gap-2">
+            {/* ✅ Logged in → show dropdown */}
+            {isLoggedIn && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="w-9 h-9 rounded-full overflow-hidden border">
+                    <Image
+                      src={user?.image || "/default-avatar.png"}
+                      alt="Profile"
+                      width={36}
+                      height={36}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                </DropdownMenuTrigger>
 
-            <SheetContent side="right">
-              <SheetHeader>
-                <SheetTitle>Menu</SheetTitle>
-              </SheetHeader>
-
-              <div className="flex flex-col gap-4 mt-6">
-                <Link href="/">Home</Link>
-                <Link href="/events">Events</Link>
-
-                {!isLoggedIn ? (
-                  <>
-                    <Link href="/login">Login</Link>
-                    <Link href="/signup">Signup</Link>
-                  </>
-                ) : (
-                  <>
+                <DropdownMenuContent align="end" className="w-48 z-50">
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile">My Profile</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
                     <Link href="/dashboard">Dashboard</Link>
-                    <Link href="/dashboard/create-event">Create Event</Link>
-                    <Link href="/dashboard/profile">Profile</Link>
-                    <Link href="/dashboard/my-events">My Events</Link>
-                    <button className="text-left">Logout</button>
-                  </>
-                )}
-              </div>
-            </SheetContent>
-          </Sheet>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <button className="w-full text-left">Logout</button>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+
+            {/* ✅ Mobile Menu (Sheet) */}
+            <Sheet>
+              <SheetTrigger asChild>
+                <button>
+                  <MenuIcon className="h-5 w-5" />
+                </button>
+              </SheetTrigger>
+
+              <SheetContent side="right">
+                <SheetHeader>
+                  <SheetTitle>Menu</SheetTitle>
+                </SheetHeader>
+
+                <div className="flex flex-col gap-4 mt-6">
+                  <Link href="/">Home</Link>
+                  <Link href="/events">Events</Link>
+
+                  {!isLoggedIn ? (
+                    <>
+                      <Link href="/login">Login</Link>
+                      <Link href="/signup">Signup</Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link href="/dashboard">Dashboard</Link>
+                      <Link href="/profile">Profile</Link>
+                      <button className="text-left">Logout</button>
+                    </>
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
         </nav>
       </div>
     </header>

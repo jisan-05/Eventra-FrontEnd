@@ -26,8 +26,7 @@ export default function EventForm() {
     date: "",
     time: "",
     type: "",
-    fee: "",
-    ownerId: "",
+    fee: ""
   })
 
   const handleChange = (e: any) => {
@@ -80,8 +79,7 @@ export default function EventForm() {
         date: "",
         time: "",
         type: "",
-        fee: "",
-        ownerId: "",
+        fee: ""
       })
 
       alert("✅ Event created successfully!")
@@ -201,18 +199,6 @@ export default function EventForm() {
             />
           </div>
         )}
-
-        {/* Owner ID */}
-        <div>
-          <Label>Owner ID</Label>
-          <Input
-            name="ownerId"
-            value={formData.ownerId}
-            placeholder="User ID"
-            onChange={handleChange}
-            required
-          />
-        </div>
 
         {/* Submit */}
         <Button type="submit" className="w-full" disabled={loading}>

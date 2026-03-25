@@ -1,38 +1,55 @@
-import { createAuthClient } from "better-auth/react"; // make sure to import from better-auth/react
+// import { createAuthClient } from "better-auth/react"; // make sure to import from better-auth/react
+
+// export const authClient = createAuthClient({
+//   //you can pass client configuration here
+//   // baseURL: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth`,
+//   baseURL: process.env.NEXT_PUBLIC_APP_URL
+//     ? process.env.NEXT_PUBLIC_APP_URL
+//     : "/api/auth",
+//   fetchOptions: { credentials: "include" },
+
+//   plugins: [
+//     {
+//       id: "next-cookies-request",
+//       fetchPlugins: [
+//         {
+//           id: "next-cookies-request-plugin",
+//           name: "next-cookies-request-plugin",
+//           hooks: {
+//             async onRequest(ctx) {
+//               if (typeof window === "undefined") {
+//                 const { cookies } = await import("next/headers");
+//                 const headers = await cookies();
+//                 ctx.headers.set("cookie", headers.toString());
+//               }
+//             },
+//           },
+//         },
+//       ],
+//     },
+//   ],
+// });
+
+// export const signInWithGoogle = async () => {
+//   return await authClient.signIn.social({
+//     provider: "google",
+//     callbackURL: `${process.env.NEXT_PUBLIC_APP_URL}/private`,
+//   });
+// };
+
+
+
+// A-4 Code ---------
+
+  
+import { createAuthClient } from "better-auth/react";
+
+const API_URL = process.env.NEXT_PUBLIC_APP_URL
 
 export const authClient = createAuthClient({
-  //you can pass client configuration here
-  // baseURL: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth`,
-  baseURL: process.env.NEXT_PUBLIC_APP_URL
-    ? process.env.NEXT_PUBLIC_APP_URL
-    : "/api/auth",
-  fetchOptions: { credentials: "include" },
-
-  plugins: [
-    {
-      id: "next-cookies-request",
-      fetchPlugins: [
-        {
-          id: "next-cookies-request-plugin",
-          name: "next-cookies-request-plugin",
-          hooks: {
-            async onRequest(ctx) {
-              if (typeof window === "undefined") {
-                const { cookies } = await import("next/headers");
-                const headers = await cookies();
-                ctx.headers.set("cookie", headers.toString());
-              }
-            },
-          },
-        },
-      ],
-    },
-  ],
+  baseURL: typeof window !== "undefined" ? window.location.origin : `${API_URL}`,
+  fetchOptions: {
+    credentials: "include",
+  },
 });
 
-export const signInWithGoogle = async () => {
-  return await authClient.signIn.social({
-    provider: "google",
-    callbackURL: `${process.env.NEXT_PUBLIC_APP_URL}/private`,
-  });
-};

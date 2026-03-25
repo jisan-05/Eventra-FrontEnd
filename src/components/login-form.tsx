@@ -19,6 +19,8 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useState } from "react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export function LoginForm({
   className,
@@ -27,6 +29,11 @@ export function LoginForm({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const router = useRouter();
+
+
+
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -51,15 +58,17 @@ export function LoginForm({
         throw new Error(data.message || "Login failed");
       }
 
-      console.log("Login success:", data);
+      
+   toast.success("Login successful");
 
-      alert("✅ Login successful");
-
-      // 👉 redirect (Next.js)
-      // window.location.href = "/dashboard"
+setTimeout(() => {
+  router.push("/");
+}, 1500);
+      
+      
     } catch (err: any) {
       console.error(err);
-      alert(err.message);
+      toast.error(err.message || "An error occurred during login");
     } finally {
       setLoading(false);
     }
