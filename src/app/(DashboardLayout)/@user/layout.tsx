@@ -3,14 +3,26 @@
 import Link from "next/link";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import {
+  LayoutDashboard,
+  CalendarDays,
+  Users,
+  Mail,
+  Star,
+  Settings,
+  Menu,
+  X,
+  Search,
+} from "lucide-react";
 
+// Sidebar nav items
 const navItems = [
-  { name: "Dashboard", href: "/dashboard", icon: "🏠" },
-  { name: "Manage Users", href: "/dashboard/manage-users", icon: "👥" },
-  { name: "Manage Events", href: "/dashboard/manage-events", icon: "📅" },
-  { name: "Reports", href: "/dashboard/add-category", icon: "🚨" },
-  { name: "Settings", href: "/dashboard/manage-category", icon: "⚙️" },
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "My Events", href: "/dashboard/myevents", icon: CalendarDays },
+  { name: "Joined Events", href: "/dashboard/view-all-orders", icon: Users },
+  { name: "Invitations", href: "/dashboard/invitations", icon: Mail },
+  { name: "Reviews", href: "/dashboard/add-category", icon: Star },
+  { name: "Settings", href: "/dashboard/manage-category", icon: Settings },
 ];
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
@@ -30,22 +42,24 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       {/* Sidebar */}
       <aside
         className={`fixed z-50 top-0 left-0 h-full w-64 bg-white/90 backdrop-blur-xl border-r shadow-lg transition-transform duration-300
-          ${open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
+        ${open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
       >
         {/* Logo */}
         <div className="p-6 border-b flex justify-between items-center">
-          <h1 className="text-2xl font-bold tracking-tight">
-            <Link href="/">FoodHub</Link>
+          <h1 className="text-xl font-bold tracking-tight">
+            <Link href="/">Eventra</Link>
           </h1>
           <button onClick={() => setOpen(false)} className="lg:hidden">
             <X size={20} />
           </button>
         </div>
 
-        {/* Navigation */}
-        <nav className="p-4 space-y-2">
+        {/* Nav */}
+        <nav className="p-4 space-y-1">
           {navItems.map((item, index) => {
+            const Icon = item.icon;
             const isActive = pathname === item.href;
+
             return (
               <Link
                 key={index}
@@ -53,11 +67,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all
                   ${
                     isActive
-                      ? "bg-blue-500 text-white shadow"
-                      : "text-gray-700 hover:bg-gray-200/60 hover:text-black"
+                      ? "bg-black text-white shadow"
+                      : "text-gray-600 hover:bg-gray-200/60 hover:text-black"
                   }`}
               >
-                <span>{item.icon}</span>
+                <Icon size={18} />
                 {item.name}
               </Link>
             );
@@ -70,7 +84,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <div className="w-10 h-10 rounded-full bg-gray-300" />
             <div>
               <p className="text-sm font-semibold">Jisan</p>
-              <p className="text-xs text-gray-500">Admin</p>
+              <p className="text-xs text-gray-500">Developer</p>
             </div>
           </div>
         </div>
@@ -88,7 +102,17 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <h2 className="text-lg font-semibold tracking-tight">Dashboard</h2>
           </div>
 
-          {/* Right placeholder (profile) */}
+          {/* Center (Search) */}
+          <div className="hidden md:flex items-center bg-gray-100 rounded-lg px-3 py-1.5 w-72">
+            <Search size={16} className="text-gray-500" />
+            <input
+              type="text"
+              placeholder="Search..."
+              className="bg-transparent outline-none px-2 text-sm w-full"
+            />
+          </div>
+
+          {/* Right */}
           <div className="flex items-center gap-4">
             <div className="w-9 h-9 rounded-full bg-gray-300 cursor-pointer" />
           </div>

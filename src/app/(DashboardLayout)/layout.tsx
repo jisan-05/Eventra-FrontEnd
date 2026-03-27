@@ -1,16 +1,28 @@
+"use client"
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { authClient } from "@/lib/auth-client";
+import { useEffect, useState } from "react";
 
 
-
-const DashboardLayout =async ({admin}:{admin:React.ReactNode}) => {
+const DashboardLayout = ({admin,user}:{admin:React.ReactNode;user:React.ReactNode}) => {
+    const [session, setSession] = useState<any>(null);
     
-    const Roles = "ADMIN"
-    return (
-        <div>
-           {/* {Roles==="CUSTOMER"&& customer}
-           {Roles==="PROVIDER"&& provider} */}
-           {Roles==="ADMIN"&& admin}
-        </div>
-    );
+      useEffect(() => {
+        const getSession = async () => {
+          const sessionData = await authClient.getSession();
+          setSession(sessionData);
+        };
+    
+        getSession();
+      }, []);
+    
+      const Roles = session?.data?.user?.role;
+  return (
+    <div>
+      {Roles === "ADMIN" && admin}
+      {Roles === "USER" && user}
+    </div>
+  );
 };
 
 export default DashboardLayout;

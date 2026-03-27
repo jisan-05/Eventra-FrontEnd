@@ -1,0 +1,127 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
+
+import { useState } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
+import { Button } from "@/components/ui/button";
+import { Eye, Pencil, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { toast } from "sonner";
+
+interface EventTableProps {
+  events: any[];
+}
+
+export default function EventTable({ events }: EventTableProps) {
+  const [eventList, setEventList] = useState(events);
+  const [loadingId, setLoadingId] = useState<string | null>(null);
+
+  const handleDelete = async (id: string) => {
+  const confirmDelete = confirm("Are you sure to delete this event?");
+  if (!confirmDelete) return;
+
+  try {
+    setLoadingId(id);
+
+    const res = await fetch(`/api/v1/events/admin/${id}`, {
+      method: "DELETE",
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      // 🔥 UI update
+      setEventList((prev) => prev.filter((event) => event.id !== id));
+
+      // ✅ SUCCESS TOAST
+      toast.success("Event deleted successfully 🚀");
+    } else {
+      toast.error(data.message || "Failed to delete event");
+    }
+  } catch (err) {
+    toast.error("Something went wrong ❌");
+  } finally {
+    setLoadingId(null);
+  }
+};
+
+  return (
+    <div className="bg-white rounded-2xl shadow-md border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Title</TableHead>
+            <TableHead>Date</TableHead>
+            <TableHead>Type</TableHead>
+            <TableHead>Fee</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+
+        <TableBody>
+          {eventList.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={5} className="text-center py-6">
+                No events found
+              </TableCell>
+            </TableRow>
+          )}
+
+          {eventList.map((event) => (
+            <TableRow key={event.id}>
+              <TableCell className="font-medium">
+                {event.title}
+              </TableCell>
+
+              <TableCell>
+                {new Date(event.date).toLocaleDateString()}
+              </TableCell>
+
+              <TableCell>
+                {event.type.replace("_", " ")}
+              </TableCell>
+
+              <TableCell>
+                {event.fee > 0 ? `৳${event.fee}` : "Free"}
+              </TableCell>
+
+              <TableCell className="text-right space-x-2">
+                {/* 👁️ */}
+                <Link href={`/events/${event.id}`}>
+                  <Button size="icon" variant="outline">
+                    <Eye className="w-4 h-4" />
+                  </Button>
+                </Link>
+
+                {/* ✏️ */}
+                <Link href={`/dashboard/edit-event/${event.id}`}>
+                  <Button size="icon" variant="secondary">
+                    <Pencil className="w-4 h-4" />
+                  </Button>
+                </Link>
+
+                {/* 🗑️ */}
+                <Button
+                  size="icon"
+                  variant="destructive"
+                  disabled={loadingId === event.id}
+                  onClick={() => handleDelete(event.id)}
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  );
+}

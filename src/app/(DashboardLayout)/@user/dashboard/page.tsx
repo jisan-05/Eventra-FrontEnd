@@ -1,0 +1,18 @@
+import React from 'react';
+
+const AdminDashboard = () => {
+  return (
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
+      <div className="bg-white shadow-2xl rounded-2xl p-16 w-full max-w-4xl text-center">
+        <h1 className="text-5xl font-extrabold text-gray-800 mb-4">
+          Welcome to User Dashboard
+        </h1>
+        <p className="text-gray-500 text-lg">
+          Oversee all activities, manage users, and control the platform efficiently.
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default AdminDashboard;
