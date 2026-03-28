@@ -11,9 +11,10 @@ type Event = {
   title: string;
   description?: string | null;
   venue?: string | null;
+  eventLink?: string | null;
   date?: string | null;
   time?: string | null;
-  type?: "PUBLIC" | "PRIVATE";
+  type?: string;
   fee?: number | null;
   ownerId?: string;
 };
@@ -35,7 +36,8 @@ const EventDetailsPage = async ({
     cache: "no-store",
   });
 
-  const event: Event | null = (await res.json())?.data ?? null;
+  const payload = await res.json();
+  const event: Event | null = payload?.data ?? null;
 
   if (!event) {
     return (
@@ -114,8 +116,17 @@ const EventDetailsPage = async ({
             </div>
 
             <div>
-              <p className="font-semibold">Venue</p>
-              <p>{event.venue || "Online / TBD"}</p>
+              <p className="font-semibold">Venue / Link</p>
+              <p>
+                {event.venue ||
+                  (event.eventLink ? (
+                    <a href={event.eventLink} className="text-amber-400 hover:underline break-all">
+                      {event.eventLink}
+                    </a>
+                  ) : (
+                    "TBD"
+                  ))}
+              </p>
             </div>
 
             <div>
@@ -130,10 +141,16 @@ const EventDetailsPage = async ({
           </div>
 
           {/* Participation Button */}
-          {event.fee && event.fee > 0 && !isOwner && !participationStatus ? (
+          {(event.fee ?? 0) > 0 && !isOwner && !participationStatus ? (
              <div className="flex flex-col gap-2">
-               <p className="text-gray-400">This event requires a payment of ৳{event.fee}. Status will become Pending approval afterwards.</p>
-               <CheckoutButton eventId={event.id} fee={event.fee} />
+               <p className="text-gray-400">
+                 This event requires a payment of ৳{event.fee}. After payment, your request stays pending until the host approves.
+               </p>
+               <CheckoutButton
+                 eventId={event.id}
+                 fee={event.fee ?? 0}
+                 label={event.type?.startsWith("PRIVATE") ? "Pay & Request" : "Pay & Join"}
+               />
              </div>
           ) : (
             <EventInteractionButton 
