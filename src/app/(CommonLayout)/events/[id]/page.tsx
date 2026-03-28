@@ -32,8 +32,10 @@ const EventDetailsPage = async ({
   const isCanceled = searchParamsData.canceled === "true";
 
   // Fetch single event directly in page
+  const cookieStore = await cookies();
   const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/v1/events/${id}`, {
     cache: "no-store",
+    headers: { Cookie: cookieStore.toString() },
   });
 
   const payload = await res.json();
@@ -65,7 +67,6 @@ const EventDetailsPage = async ({
   let participationStatus = null;
   if (currentUser) {
     try {
-      const cookieStore = await cookies();
       const pRes = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/v1/participations/my-participations`, {
         headers: { Cookie: cookieStore.toString() },
         cache: "no-store",
