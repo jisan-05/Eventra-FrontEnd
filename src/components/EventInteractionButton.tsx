@@ -45,7 +45,8 @@ export default function EventInteractionButton({ eventId, type, isOwner, partici
     setLoading(true);
     try {
       const res = await fetch(`/api/v1/participations/${eventId}/join`, {
-        method: "POST"
+        method: "POST",
+        credentials: "include",
       });
       const data = await res.json();
       if (res.ok && data.success) {

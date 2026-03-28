@@ -47,6 +47,7 @@ export default function ReviewsSection({ eventId, isLogged }: { eventId: string;
       const res = await fetch(`/api/v1/reviews`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ eventId, rating: parseInt(rating), comment })
       });
       const data = await res.json();

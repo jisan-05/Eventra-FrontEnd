@@ -4,7 +4,15 @@ import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 
-export default function CheckoutButton({ eventId, fee }: { eventId: string, fee: number }) {
+export default function CheckoutButton({
+  eventId,
+  fee,
+  label,
+}: {
+  eventId: string;
+  fee: number;
+  label?: string;
+}) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
@@ -17,14 +25,14 @@ export default function CheckoutButton({ eventId, fee }: { eventId: string, fee:
 
     try {
       setLoading(true);
-      const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/v1/payments/create-checkout-session`, {
+      const res = await fetch(`/api/v1/payments/create-checkout-session`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({
           eventId,
-          userId: session.user.id,
         }),
       });
 
@@ -33,7 +41,7 @@ export default function CheckoutButton({ eventId, fee }: { eventId: string, fee:
       if (data.success && data.data?.url) {
         window.location.href = data.data.url;
       } else {
-        alert("Failed to initiate checkout");
+        alert(data.message || "Failed to initiate checkout");
         setLoading(false);
       }
     } catch (err) {
@@ -51,7 +59,7 @@ export default function CheckoutButton({ eventId, fee }: { eventId: string, fee:
       disabled={loading}
       className="w-full md:w-auto mt-6 px-6 py-3 rounded-xl bg-yellow-500 text-black font-semibold hover:bg-yellow-600 transition disabled:opacity-50"
     >
-      {loading ? "Processing..." : "Pay & Join"}
+      {loading ? "Processing..." : label ?? "Pay & Join"}
     </button>
   );
 }
