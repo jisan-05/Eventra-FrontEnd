@@ -47,7 +47,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         {/* Logo */}
         <div className="p-6 border-b flex justify-between items-center">
           <h1 className="text-xl font-bold tracking-tight">
-            <Link href="/">Planora</Link>
+            <Link href="/">Eventra</Link>
           </h1>
           <button onClick={() => setOpen(false)} className="lg:hidden">
             <X size={20} />

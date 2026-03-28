@@ -56,7 +56,7 @@ export default function InviteByEmail({
         Invite someone by email
       </h3>
       <p className={`text-sm ${variant === "light" ? "text-gray-600" : "text-gray-400"}`}>
-        They must already have a Planora account. They will see the invite under Dashboard → Invitations.
+        They must already have a Eventra account. They will see the invite under Dashboard → Invitations.
       </p>
       <div className="flex flex-col sm:flex-row gap-2 sm:items-end">
         <div className="flex-1 space-y-1">

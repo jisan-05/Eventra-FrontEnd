@@ -135,7 +135,7 @@ export default function HomeHeroSlider({ featuredEvent }: { featuredEvent: HomeF
         <SwiperSlide>
           <HeroSlideFrame bgImage="/event1.webp">
             <HeroSlideContent
-              label="Planora"
+              label="Eventra"
               title="Event management that stays clear from invite to"
               titleAccent="checkout."
               description="Browse public programs, run paid or private events, and keep RSVPs and approvals in one workflow built for hosts and guests."

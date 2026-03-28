@@ -65,12 +65,12 @@ export const Navbar = () => {
           <Link href="/" className="flex items-center gap-2">
             <Image
               src="/logo.avif"
-              alt="Planora"
+              alt="Eventra"
               width={32}
               height={32}
               priority
             />
-            <span className="text-lg font-bold">Planora</span>
+            <span className="text-lg font-bold">Eventra</span>
           </Link>
 
           {/* 🔹 Desktop Menu */}

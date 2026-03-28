@@ -30,7 +30,7 @@ const slides = [
     id: 3,
     title: "Secure Payments & Private Access",
     description:
-      "Paid or private events? Planora makes everything simple and secure.",
+      "Paid or private events? Eventra makes everything simple and secure.",
     image:
       "https://images.unsplash.com/photo-1503428593586-e225b39bddfe?auto=format&fit=crop&w=1920&q=80",
   },

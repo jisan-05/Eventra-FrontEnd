@@ -5,7 +5,7 @@ export function SiteFooter() {
     <footer className="border-t bg-slate-950 text-slate-400 mt-auto">
       <div className="container mx-auto px-4 py-10 flex flex-col md:flex-row gap-8 justify-between items-start md:items-center">
         <div>
-          <p className="text-white font-semibold">Planora</p>
+          <p className="text-white font-semibold">Eventra</p>
           <p className="text-sm mt-1">Events, payments, and community in one place.</p>
         </div>
         <nav className="flex flex-wrap gap-6 text-sm">
@@ -21,7 +21,7 @@ export function SiteFooter() {
         </nav>
       </div>
       <div className="border-t border-slate-800 text-center text-xs py-4 text-slate-500">
-        © {new Date().getFullYear()} Planora
+        © {new Date().getFullYear()} Eventra
       </div>
     </footer>
   );

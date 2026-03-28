@@ -15,8 +15,8 @@ export default function SettingsPage() {
 
   useEffect(() => {
     try {
-      const a = localStorage.getItem("planora_notify_invites");
-      const b = localStorage.getItem("planora_notify_events");
+      const a = localStorage.getItem("Eventra_notify_invites");
+      const b = localStorage.getItem("Eventra_notify_events");
       if (a !== null) setNotifyInvites(a === "1");
       if (b !== null) setNotifyEvents(b === "1");
     } catch {
@@ -98,7 +98,7 @@ export default function SettingsPage() {
                 const v = e.target.checked;
                 setNotifyInvites(v);
                 try {
-                  localStorage.setItem("planora_notify_invites", v ? "1" : "0");
+                  localStorage.setItem("Eventra_notify_invites", v ? "1" : "0");
                 } catch {
                   /* ignore */
                 }
@@ -115,7 +115,7 @@ export default function SettingsPage() {
                 const v = e.target.checked;
                 setNotifyEvents(v);
                 try {
-                  localStorage.setItem("planora_notify_events", v ? "1" : "0");
+                  localStorage.setItem("Eventra_notify_events", v ? "1" : "0");
                 } catch {
                   /* ignore */
                 }
