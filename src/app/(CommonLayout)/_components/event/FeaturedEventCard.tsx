@@ -31,6 +31,7 @@ export default function EventCard({ event }: EventCardProps) {
       {/* Content */}
       <CardContent className="space-y-3">
         <h2 className="text-lg font-semibold line-clamp-1">{event.title}</h2>
+        <p className="text-xs text-gray-500">Organizer: {event.owner?.name ?? "—"}</p>
 
         <p className="text-sm text-gray-600 line-clamp-2">
           {event.description}
