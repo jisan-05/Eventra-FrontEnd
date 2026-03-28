@@ -37,13 +37,17 @@ const EventDetailsPage = async ({
   });
 
   const payload = await res.json();
-  const event: Event | null = payload?.data ?? null;
+  const event: Event | null = res.ok && payload?.success !== false ? payload?.data ?? null : null;
 
   if (!event) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-900 text-gray-400">
-        <div className="text-center">
-          <p className="mb-4 text-lg">Event not found</p>
+        <div className="text-center max-w-md mx-auto">
+          <p className="mb-4 text-lg">
+            {res.status === 403 || res.status === 401
+              ? "This is a private event. Sign in with an invited account to view it."
+              : "Event not found"}
+          </p>
           <Link
             href="/events"
             className="text-yellow-500 hover:underline inline-flex items-center gap-1"
