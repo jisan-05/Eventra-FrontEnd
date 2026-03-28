@@ -10,7 +10,7 @@ export default async function MyReviewsPage() {
     cache: "no-store",
   });
   const data = await res.json();
-  const reviews = data.data || [];
+  const reviews = Array.isArray(data?.data) ? data.data : [];
 
   return (
     <div className="p-6">

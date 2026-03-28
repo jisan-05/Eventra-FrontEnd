@@ -17,7 +17,10 @@ export default async function MyEventsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold">My events</h1>
-          <p className="text-gray-600 text-sm">Create, edit, and manage participants.</p>
+          <p className="text-gray-600 text-sm">
+            Use <strong>Join list & approvals</strong> to see who joined, who paid, and who is waiting for your
+            approval.
+          </p>
         </div>
         <Button asChild className="bg-black text-white hover:bg-gray-800">
           <Link href="/dashboard/create-event">Create event</Link>
@@ -48,7 +51,7 @@ export default async function MyEventsPage() {
                   <Link href={`/dashboard/edit-event/${ev.id}`}>Edit</Link>
                 </Button>
                 <Button asChild size="sm" className="bg-amber-500 text-black hover:bg-amber-400">
-                  <Link href={`/dashboard/myevents/${ev.id}/participants`}>Participants</Link>
+                  <Link href={`/dashboard/myevents/${ev.id}/participants`}>Join list & approvals</Link>
                 </Button>
               </div>
             </li>

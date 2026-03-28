@@ -32,6 +32,7 @@ import {
 import { authClient } from "@/lib/auth-client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import SafeUserImage from "@/components/SafeUserImage";
 
 export const Navbar = () => {
   const [session, setSession] = useState<any>(null);
@@ -146,8 +147,8 @@ export const Navbar = () => {
                 <DropdownMenuTrigger asChild>
                   {/* ✅ FIX: use button instead of div */}
                   <button className="w-9 h-9 rounded-full overflow-hidden border">
-                    <Image
-                      src={user?.image || "/default-avatar.png"} // ✅ fallback
+                    <SafeUserImage
+                      src={user?.image}
                       alt="Profile"
                       width={36}
                       height={36}
@@ -186,8 +187,8 @@ export const Navbar = () => {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="w-9 h-9 rounded-full overflow-hidden border">
-                    <Image
-                      src={user?.image || "/default-avatar.png"}
+                    <SafeUserImage
+                      src={user?.image}
                       alt="Profile"
                       width={36}
                       height={36}

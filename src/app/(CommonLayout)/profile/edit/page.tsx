@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
+import SafeUserImage from "@/components/SafeUserImage";
 
 export default function EditProfilePage() {
   const [user, setUser] = useState<any>(null);
@@ -73,7 +73,7 @@ export default function EditProfilePage() {
         {/* Profile Image */}
         <div className="text-center">
           {user.image ? (
-            <Image
+            <SafeUserImage
               src={user.image}
               alt="Profile"
               width={128}

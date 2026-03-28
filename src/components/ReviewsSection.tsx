@@ -7,6 +7,26 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { DEFAULT_AVATAR_SRC, getSafeAvatarSrc } from "@/lib/safe-image-src";
+
+function ReviewUserAvatar({ name, image }: { name: string; image: string | null }) {
+  const [src, setSrc] = useState(() => getSafeAvatarSrc(image));
+  useEffect(() => {
+    setSrc(getSafeAvatarSrc(image));
+  }, [image]);
+
+  return (
+    <Avatar className="h-10 w-10">
+      <AvatarImage
+        src={src}
+        onLoadingStatusChange={(s) => {
+          if (s === "error") setSrc(DEFAULT_AVATAR_SRC);
+        }}
+      />
+      <AvatarFallback>{name[0] ?? "?"}</AvatarFallback>
+    </Avatar>
+  );
+}
 
 interface Review {
   id: string;
@@ -16,7 +36,13 @@ interface Review {
   user: { name: string; image: string | null };
 }
 
-export default function ReviewsSection({ eventId, isLogged }: { eventId: string; isLogged: boolean }) {
+export default function ReviewsSection({
+  eventId,
+  isLogged,
+}: {
+  eventId: string;
+  isLogged: boolean;
+}) {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [rating, setRating] = useState("5");
   const [comment, setComment] = useState("");
@@ -66,8 +92,11 @@ export default function ReviewsSection({ eventId, isLogged }: { eventId: string;
   };
 
   return (
-    <div className="mt-12 space-y-8 animate-fade-in">
-      <h2 className="text-3xl font-bold text-yellow-400">Reviews & Ratings</h2>
+    <div id="event-reviews" className="mt-12 space-y-8 scroll-mt-24 animate-fade-in">
+      <h2 className="text-3xl font-bold text-yellow-400">Reviews & ratings</h2>
+      <p className="text-gray-400 text-sm -mt-4">
+        Everyone sees reviews here. Your own reviews also appear under Dashboard → My reviews.
+      </p>
       
       {isLogged ? (
         <form onSubmit={handleSubmit} className="bg-gray-800 p-6 rounded-2xl shadow-xl space-y-4">
@@ -103,10 +132,7 @@ export default function ReviewsSection({ eventId, isLogged }: { eventId: string;
         ) : (
           reviews.map(r => (
             <div key={r.id} className="bg-gray-800 p-6 rounded-xl border border-gray-700 flex gap-4">
-              <Avatar className="h-10 w-10">
-                <AvatarImage src={r.user.image || undefined} />
-                <AvatarFallback>{r.user.name[0]}</AvatarFallback>
-              </Avatar>
+              <ReviewUserAvatar name={r.user.name} image={r.user.image} />
               <div className="flex-1">
                 <div className="flex justify-between items-start">
                   <div>

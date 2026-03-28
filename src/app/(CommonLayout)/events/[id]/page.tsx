@@ -1,8 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import CheckoutButton from "../../../../components/CheckoutButton";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import EventInteractionButton from "@/components/EventInteractionButton";
 import ReviewsSection from "@/components/ReviewsSection";
+import InviteByEmail from "@/components/InviteByEmail";
+import EventRatingSummary from "@/components/EventRatingSummary";
+import StripePaymentConfirmClient from "@/components/StripePaymentConfirmClient";
 import { userService } from "@/services/user.services";
 import { cookies } from "next/headers";
 
@@ -30,6 +34,13 @@ const EventDetailsPage = async ({
   const searchParamsData = searchParams ? await searchParams : {};
   const isSuccess = searchParamsData.success === "true";
   const isCanceled = searchParamsData.canceled === "true";
+  const rawStripeSession = searchParamsData.session_id;
+  const stripeSessionId =
+    typeof rawStripeSession === "string"
+      ? rawStripeSession
+      : Array.isArray(rawStripeSession)
+        ? rawStripeSession[0]
+        : undefined;
 
   // Fetch single event directly in page
   const cookieStore = await cookies();
@@ -64,6 +75,27 @@ const EventDetailsPage = async ({
   const { data: sessionData } = await userService.getSession();
   const currentUser = sessionData?.user;
 
+  const apiBase = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:5000";
+  let paymentConfirmAlreadyRecorded = false;
+  if (isSuccess && stripeSessionId && currentUser) {
+    try {
+      const confirmRes = await fetch(`${apiBase}/api/v1/payments/confirm-stripe-session`, {
+        method: "POST",
+        headers: {
+          Cookie: cookieStore.toString(),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ sessionId: stripeSessionId }),
+        cache: "no-store",
+      });
+      const confirmJson = await confirmRes.json().catch(() => ({}));
+      const msg = typeof confirmJson?.message === "string" ? confirmJson.message : "";
+      paymentConfirmAlreadyRecorded = msg.toLowerCase().includes("already");
+    } catch {
+      /* confirmation is best-effort; webhook may have run */
+    }
+  }
+
   let participationStatus = null;
   if (currentUser) {
     try {
@@ -83,6 +115,7 @@ const EventDetailsPage = async ({
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 py-10 px-4">
+      <StripePaymentConfirmClient />
       <div className="max-w-4xl mx-auto">
         {/* Back Button */}
         <Link
@@ -93,8 +126,24 @@ const EventDetailsPage = async ({
         </Link>
 
         {isSuccess && (
-          <div className="mb-6 bg-green-900/50 border border-green-500 text-green-200 px-4 py-3 rounded-xl">
-            Payment successful! You are now participating in this event.
+          <div
+            className={`mb-6 px-4 py-3 rounded-xl border ${
+              paymentConfirmAlreadyRecorded
+                ? "bg-sky-900/40 border-sky-500 text-sky-100"
+                : "bg-green-900/50 border-green-500 text-green-200"
+            }`}
+          >
+            {paymentConfirmAlreadyRecorded ? (
+              <>
+                You have already paid for this event. Your request stays <strong>pending</strong> until the host
+                approves you on the join list.
+              </>
+            ) : (
+              <>
+                Payment successful. For paid events, your spot is <strong>pending</strong> until the host approves you
+                in their join list. If you just returned from checkout, your request should appear for the host now.
+              </>
+            )}
           </div>
         )}
         
@@ -107,7 +156,26 @@ const EventDetailsPage = async ({
         {/* Event Card */}
         <div className="bg-gray-800 rounded-2xl shadow-xl p-8 space-y-6">
           <h1 className="text-4xl font-bold text-yellow-400">{event.title}</h1>
+          <div className="py-2">
+            <EventRatingSummary eventId={event.id} />
+          </div>
           <p className="text-gray-300 text-lg">{event.description || "No description available."}</p>
+
+          {isOwner && (
+            <div className="rounded-xl border border-amber-500/50 bg-amber-950/30 p-4 text-sm">
+              <p className="font-semibold text-amber-300 mb-2">You are the host</p>
+              <p className="text-gray-300 mb-3">
+                See everyone who requested to join, paid and is waiting, or is already approved on the{" "}
+                <strong>join list</strong>.
+              </p>
+              <Link
+                href={`/dashboard/myevents/${event.id}/participants`}
+                className="inline-flex items-center gap-2 rounded-lg bg-amber-500 px-4 py-2 text-black font-semibold hover:bg-amber-400"
+              >
+                Open join list & approvals
+              </Link>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-200">
             <div>
@@ -165,6 +233,10 @@ const EventDetailsPage = async ({
               participationStatus={participationStatus}
               fee={event.fee || 0}
             />
+          )}
+
+          {isOwner && (
+            <InviteByEmail eventId={event.id} />
           )}
 
           <ReviewsSection eventId={event.id} isLogged={!!currentUser} />

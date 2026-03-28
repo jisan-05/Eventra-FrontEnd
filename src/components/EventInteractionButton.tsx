@@ -19,9 +19,14 @@ export default function EventInteractionButton({ eventId, type, isOwner, partici
 
   if (isOwner) {
     return (
-      <Button variant="secondary" onClick={() => router.push(`/dashboard/manage-events`)}>
-        Manage Your Event
-      </Button>
+      <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+        <Button variant="secondary" onClick={() => router.push(`/dashboard/myevents/${eventId}/participants`)}>
+          Join list & approvals
+        </Button>
+        <Button variant="outline" onClick={() => router.push(`/dashboard/edit-event/${eventId}`)}>
+          Edit event
+        </Button>
+      </div>
     );
   }
 
@@ -30,7 +35,18 @@ export default function EventInteractionButton({ eventId, type, isOwner, partici
   }
 
   if (participationStatus === "PENDING") {
-    return <Button variant="outline" disabled>Request Pending Approval</Button>;
+    return (
+      <div className="flex flex-col gap-2 w-full md:w-auto">
+        <Button variant="outline" disabled className="w-full md:w-auto text-black">
+          Request Pending Approval
+        </Button>
+        {fee > 0 && (
+          <p className="text-sm text-gray-400">
+            You have already paid for this event. The host still needs to approve your request.
+          </p>
+        )}
+      </div>
+    );
   }
 
   if (participationStatus === "BANNED") {

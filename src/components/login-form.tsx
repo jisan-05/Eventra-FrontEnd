@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export function LoginForm({
   className,
@@ -31,9 +31,8 @@ export function LoginForm({
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
-
-
-
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -58,12 +57,14 @@ export function LoginForm({
         throw new Error(data.message || "Login failed");
       }
 
-      
-   toast.success("Login successful");
+      toast.success("Login successful");
 
-setTimeout(() => {
-  router.push("/");
-}, 1500);
+      const next =
+        callbackUrl && callbackUrl.startsWith("/") ? callbackUrl : "/";
+      setTimeout(() => {
+        router.push(next);
+        router.refresh();
+      }, 600);
       
       
     } catch (err: any) {

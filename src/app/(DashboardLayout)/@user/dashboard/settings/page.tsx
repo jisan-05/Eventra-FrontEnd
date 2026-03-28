@@ -9,14 +9,28 @@ import { useRouter } from "next/navigation";
 export default function SettingsPage() {
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState({ name: "", image: "" });
+  const [notifyInvites, setNotifyInvites] = useState(true);
+  const [notifyEvents, setNotifyEvents] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    fetch("/api/v1/users/me")
-      .then(res => res.json())
-      .then(data => {
-        if (data.data) {
-          setProfile({ name: data.data.name || "", image: data.data.image || "" });
+    try {
+      const a = localStorage.getItem("planora_notify_invites");
+      const b = localStorage.getItem("planora_notify_events");
+      if (a !== null) setNotifyInvites(a === "1");
+      if (b !== null) setNotifyEvents(b === "1");
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/v1/users/me", { credentials: "include" })
+      .then((res) => res.json())
+      .then((data) => {
+        const u = data?.data ?? data;
+        if (u?.name != null) {
+          setProfile({ name: u.name || "", image: u.image || "" });
         }
       });
   }, []);
@@ -28,10 +42,11 @@ export default function SettingsPage() {
       const res = await fetch("/api/v1/users/me", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(profile)
+        credentials: "include",
+        body: JSON.stringify(profile),
       });
       const data = await res.json();
-      if (res.ok && data.success) {
+      if (res.ok && (data.success !== false)) {
         toast.success("Profile updated!");
         router.refresh();
       } else {
@@ -68,6 +83,49 @@ export default function SettingsPage() {
           {loading ? "Updating..." : "Update Profile"}
         </Button>
       </form>
+
+      <div className="mt-10">
+        <h2 className="text-lg font-semibold mb-2">Notifications (local preferences)</h2>
+        <p className="text-sm text-gray-500 mb-4">
+          Stored in this browser only. Use as a reminder for what you care about; email delivery is not wired yet.
+        </p>
+        <div className="bg-white p-6 rounded-xl border shadow-sm space-y-4">
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={notifyInvites}
+              onChange={(e) => {
+                const v = e.target.checked;
+                setNotifyInvites(v);
+                try {
+                  localStorage.setItem("planora_notify_invites", v ? "1" : "0");
+                } catch {
+                  /* ignore */
+                }
+              }}
+              className="h-4 w-4"
+            />
+            <span className="text-sm">Remind me about event invitations</span>
+          </label>
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={notifyEvents}
+              onChange={(e) => {
+                const v = e.target.checked;
+                setNotifyEvents(v);
+                try {
+                  localStorage.setItem("planora_notify_events", v ? "1" : "0");
+                } catch {
+                  /* ignore */
+                }
+              }}
+              className="h-4 w-4"
+            />
+            <span className="text-sm">Remind me about events I joined</span>
+          </label>
+        </div>
+      </div>
     </div>
   );
 }

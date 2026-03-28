@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -17,7 +18,10 @@ export default function ReviewCard({ review }: { review: any }) {
     if (!confirm("Delete this review?")) return;
     setLoading(true);
     try {
-      const res = await fetch(`/api/v1/reviews/${review.id}`, { method: "DELETE" });
+      const res = await fetch(`/api/v1/reviews/${review.id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
       const data = await res.json();
       if (res.ok && data.success) {
         toast.success("Review deleted");
@@ -36,7 +40,8 @@ export default function ReviewCard({ review }: { review: any }) {
       const res = await fetch(`/api/v1/reviews/${review.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ rating: Number(rating), comment })
+        credentials: "include",
+        body: JSON.stringify({ rating: Number(rating), comment }),
       });
       const data = await res.json();
       if (res.ok && data.success) {
@@ -53,7 +58,15 @@ export default function ReviewCard({ review }: { review: any }) {
 
   return (
     <div className="bg-white border rounded-xl shadow-sm p-4">
-      <h3 className="font-semibold text-lg">{review.event?.title}</h3>
+      <h3 className="font-semibold text-lg">
+        {review.event?.id ? (
+          <Link href={`/events/${review.event.id}#event-reviews`} className="hover:text-amber-700 hover:underline">
+            {review.event.title}
+          </Link>
+        ) : (
+          review.event?.title
+        )}
+      </h3>
       <p className="text-sm text-gray-500 mb-2">{new Date(review.createdAt).toLocaleDateString()}</p>
       
       {editing ? (

@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { cookies } from "next/headers";
-import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import SafeUserImage from "@/components/SafeUserImage";
 
 // Server-side fetch for logged-in user's profile
 async function getMyProfile() {
@@ -35,7 +35,7 @@ export default async function MyProfilePage() {
 
       <div className="border rounded-lg p-6 shadow-md max-w-md mx-auto">
         {user.image ? (
-          <Image
+          <SafeUserImage
             src={user.image}
             alt="Profile"
             width={128}

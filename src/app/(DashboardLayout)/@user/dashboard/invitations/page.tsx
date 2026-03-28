@@ -10,11 +10,13 @@ export default async function InvitationsPage() {
     cache: "no-store",
   });
   const data = await res.json();
-  const invitations = data.data || [];
+  const all = (data.data || []) as any[];
+  const invitations = all.filter((inv) => inv.status === "PENDING");
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Pending Invitations</h1>
+      <h1 className="text-2xl font-bold mb-2">Invitations</h1>
+      <p className="text-gray-600 text-sm mb-6">Pending invites to private or paid events. Accept, decline, or pay when required.</p>
       {invitations.length === 0 ? (
         <p className="text-gray-500">You have no pending invitations.</p>
       ) : (
