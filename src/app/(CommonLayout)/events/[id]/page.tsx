@@ -1,3 +1,4 @@
+import CheckoutButton from "../../../../components/CheckoutButton";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 
@@ -15,10 +16,15 @@ type Event = {
 
 const EventDetailsPage = async ({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
   const { id } = await params;
+  const searchParamsData = searchParams ? await searchParams : {};
+  const isSuccess = searchParamsData.success === "true";
+  const isCanceled = searchParamsData.canceled === "true";
 
   // Fetch single event directly in page
   const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/v1/events/${id}`, {
@@ -67,6 +73,18 @@ const EventDetailsPage = async ({
           <ChevronLeft size={18} /> Back
         </Link>
 
+        {isSuccess && (
+          <div className="mb-6 bg-green-900/50 border border-green-500 text-green-200 px-4 py-3 rounded-xl">
+            Payment successful! You are now participating in this event.
+          </div>
+        )}
+        
+        {isCanceled && (
+          <div className="mb-6 bg-red-900/50 border border-red-500 text-red-200 px-4 py-3 rounded-xl">
+            Payment was canceled. You can try again when you are ready.
+          </div>
+        )}
+
         {/* Event Card */}
         <div className="bg-gray-800 rounded-2xl shadow-xl p-8 space-y-6">
           <h1 className="text-4xl font-bold text-yellow-400">{event.title}</h1>
@@ -100,9 +118,13 @@ const EventDetailsPage = async ({
           </div>
 
           {/* Participation Button */}
-          <button className="w-full md:w-auto mt-6 px-6 py-3 rounded-xl bg-yellow-500 text-black font-semibold hover:bg-yellow-600 transition">
-            {participationText()}
-          </button>
+          {event.fee && event.fee > 0 ? (
+            <CheckoutButton eventId={event.id} fee={event.fee} />
+          ) : (
+            <button className="w-full md:w-auto mt-6 px-6 py-3 rounded-xl bg-yellow-500 text-black font-semibold hover:bg-yellow-600 transition">
+              {participationText()}
+            </button>
+          )}
         </div>
       </div>
     </div>
