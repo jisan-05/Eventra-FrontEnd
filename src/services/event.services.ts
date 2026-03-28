@@ -5,6 +5,20 @@ const BASE_URL =
   process.env.NEXT_PUBLIC_APP_URL || "http://localhost:5000";
 
 export const eventService = {
+  async getFeatured() {
+    const res = await fetch(`${BASE_URL}/api/v1/events/featured`, { cache: "no-store" });
+    return res.json();
+  },
+
+  async getMyEvents() {
+    const cookieStore = await cookies();
+    const res = await fetch(`${BASE_URL}/api/v1/events/my-events`, {
+      cache: "no-store",
+      headers: { Cookie: cookieStore.toString() },
+    });
+    return res.json();
+  },
+
   // ✅ Get All Events (SSR)
   async getEvents(query?: Record<string, string>) {
     const cookieStore = await cookies();
@@ -60,12 +74,12 @@ export const eventService = {
 
     return res.json();
   },
-  // ✅ Delete Event
-  async deleteEvent(id: string) {
-    const res = await fetch(`/api/v1/events/${id}`, {
+  async deleteEventOwner(id: string) {
+    const cookieStore = await cookies();
+    const res = await fetch(`${BASE_URL}/api/v1/events/owner/${id}`, {
       method: "DELETE",
+      headers: { Cookie: cookieStore.toString() },
     });
-    
     return res.json();
   },
 };
