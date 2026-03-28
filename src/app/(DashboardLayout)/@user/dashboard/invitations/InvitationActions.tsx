@@ -25,6 +25,7 @@ export default function InvitationActions({ invitationId, eventId, status, event
       const res = await fetch(`/api/v1/invitations/${invitationId}/respond`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ status: responseStatus })
       });
       const data = await res.json();
@@ -44,13 +45,14 @@ export default function InvitationActions({ invitationId, eventId, status, event
   const handlePayAndAccept = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/v1/payments/checkout-session", {
+      const res = await fetch("/api/v1/payments/create-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ eventId, invitationId }), // Passing invitationId to webhook
+        credentials: "include",
+        body: JSON.stringify({ eventId, invitationId }),
       });
       const data = await res.json();
-      if (res.ok && data.data?.url) {
+      if (res.ok && data.success && data.data?.url) {
         window.location.href = data.data.url;
       } else {
         toast.error(data.message || "Payment initiation failed");
