@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 import { Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
@@ -17,8 +18,6 @@ export default function EventActions({ eventId, isAdmin = false }: EventActionsP
   const [loading, setLoading] = useState(false);
 
   const handleDelete = async () => {
-    if (!confirm("Are you sure you want to delete this event?")) return;
-
     setLoading(true);
     try {
       const res = await eventServices.deleteEvent(eventId, isAdmin);
@@ -43,14 +42,18 @@ export default function EventActions({ eventId, isAdmin = false }: EventActionsP
           <Pencil className="w-4 h-4 mr-1" /> Edit
         </Button>
       </Link>
-      <Button
-        size="sm"
+      <ConfirmDialog
+        title="Delete this event?"
+        description="This permanently removes the event. You can’t undo this."
+        confirmLabel="Delete"
         variant="destructive"
-        onClick={handleDelete}
-        disabled={loading}
-      >
-        <Trash2 className="w-4 h-4 mr-1" /> Delete
-      </Button>
+        trigger={
+          <Button size="sm" variant="destructive" disabled={loading} type="button">
+            <Trash2 className="w-4 h-4 mr-1" /> Delete
+          </Button>
+        }
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }

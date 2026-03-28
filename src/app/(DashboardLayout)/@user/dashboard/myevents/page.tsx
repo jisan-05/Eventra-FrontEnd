@@ -40,7 +40,7 @@ export default async function MyEventsPage() {
                 <h2 className="font-semibold text-lg">{ev.title}</h2>
                 <p className="text-sm text-gray-500">
                   {new Date(ev.date).toLocaleString()} · {ev.type.replace(/_/g, " ")} ·{" "}
-                  {ev.fee > 0 ? `৳${ev.fee}` : "Free"}
+                  {ev.fee > 0 ? `$${ev.fee}` : "Free"}
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">

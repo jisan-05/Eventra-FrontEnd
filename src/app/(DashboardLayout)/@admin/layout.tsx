@@ -9,7 +9,7 @@ const navItems = [
   { name: "Dashboard", href: "/dashboard", icon: "🏠" },
   { name: "Manage Users", href: "/dashboard/manage-users", icon: "👥" },
   { name: "Manage Events", href: "/dashboard/manage-events", icon: "📅" },
-  { name: "Reports", href: "/dashboard/add-category", icon: "🚨" },
+  { name: "Reports", href: "/dashboard/reports", icon: "📊" },
   { name: "Settings", href: "/dashboard/manage-category", icon: "⚙️" },
 ];
 

@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/table";
 
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -25,8 +26,6 @@ export default function UserTable({ users }: Props) {
 
   // 🗑️ Delete user (soft delete)
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this user?")) return;
-
     try {
       setLoadingId(id);
 
@@ -94,14 +93,23 @@ export default function UserTable({ users }: Props) {
 
               <TableCell className="text-right">
                 {/* 🗑️ Delete */}
-                <Button
-                  size="icon"
+                <ConfirmDialog
+                  title="Delete this user?"
+                  description="Their account will be soft-deleted and they will no longer be able to sign in."
+                  confirmLabel="Delete user"
                   variant="destructive"
-                  disabled={loadingId === user.id}
-                  onClick={() => handleDelete(user.id)}
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
+                  trigger={
+                    <Button
+                      size="icon"
+                      variant="destructive"
+                      disabled={loadingId === user.id}
+                      type="button"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  }
+                  onConfirm={() => handleDelete(user.id)}
+                />
               </TableCell>
             </TableRow>
           ))}

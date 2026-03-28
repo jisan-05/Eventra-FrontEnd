@@ -44,7 +44,14 @@ export default function CheckoutButton({
         return;
       }
 
-      toast.error(data.message || "Failed to initiate checkout");
+      const errMsg = data.message || "Failed to initiate checkout";
+      if (typeof errMsg === "string" && errMsg.toLowerCase().includes("already paid")) {
+        toast.info(errMsg);
+        router.refresh();
+        return;
+      }
+
+      toast.error(errMsg);
     } catch (err) {
       console.error(err);
       toast.error("Error initiating checkout");

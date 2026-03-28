@@ -8,7 +8,7 @@ import InviteByEmail from "@/components/InviteByEmail";
 import EventRatingSummary from "@/components/EventRatingSummary";
 import StripePaymentConfirmClient from "@/components/StripePaymentConfirmClient";
 import { userService } from "@/services/user.services";
-import { cookies } from "next/headers";
+import { getForwardedCookieHeader } from "@/lib/get-cookie-header";
 
 type Event = {
   id: string;
@@ -42,11 +42,10 @@ const EventDetailsPage = async ({
         ? rawStripeSession[0]
         : undefined;
 
-  // Fetch single event directly in page
-  const cookieStore = await cookies();
+  const cookieHeader = await getForwardedCookieHeader();
   const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/v1/events/${id}`, {
     cache: "no-store",
-    headers: { Cookie: cookieStore.toString() },
+    headers: { Cookie: cookieHeader },
   });
 
   const payload = await res.json();
@@ -74,6 +73,7 @@ const EventDetailsPage = async ({
 
   const { data: sessionData } = await userService.getSession();
   const currentUser = sessionData?.user;
+  const isOwner = currentUser?.id === event.ownerId;
 
   const apiBase = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:5000";
   let paymentConfirmAlreadyRecorded = false;
@@ -82,7 +82,7 @@ const EventDetailsPage = async ({
       const confirmRes = await fetch(`${apiBase}/api/v1/payments/confirm-stripe-session`, {
         method: "POST",
         headers: {
-          Cookie: cookieStore.toString(),
+          Cookie: cookieHeader,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ sessionId: stripeSessionId }),
@@ -96,22 +96,47 @@ const EventDetailsPage = async ({
     }
   }
 
-  let participationStatus = null;
+  let participationStatus: string | null = null;
   if (currentUser) {
     try {
       const pRes = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/v1/participations/my-participations`, {
-        headers: { Cookie: cookieStore.toString() },
+        headers: { Cookie: cookieHeader },
         cache: "no-store",
       });
       const myParticipations = await pRes.json();
-      const currentP = myParticipations?.data?.find((p: any) => p.eventId === id);
-      participationStatus = currentP ? currentP.status : null;
+      const list = myParticipations?.data;
+      const currentP = Array.isArray(list)
+        ? list.find(
+            (p: { eventId?: string; event?: { id?: string } }) =>
+              p.eventId === id || p.event?.id === id,
+          )
+        : undefined;
+      participationStatus = currentP?.status ?? null;
     } catch (e) {
       console.error(e);
     }
   }
 
-  const isOwner = currentUser?.id === event.ownerId;
+  let hasSuccessfulPayment = false;
+  const paidEvent = (event.fee ?? 0) > 0;
+  if (currentUser && paidEvent) {
+    try {
+      const payRes = await fetch(`${apiBase}/api/v1/payments/event/${id}/status`, {
+        headers: { Cookie: cookieHeader, Accept: "application/json" },
+        cache: "no-store",
+      });
+      const payJson = await payRes.json();
+      hasSuccessfulPayment = !!payJson?.data?.hasSuccessfulPayment;
+    } catch {
+      /* ignore */
+    }
+  }
+
+  if (!participationStatus && hasSuccessfulPayment && paidEvent) {
+    participationStatus = "PENDING";
+  }
+
+  const showPaidCheckout = paidEvent && !isOwner && participationStatus == null;
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 py-10 px-4">
@@ -209,22 +234,22 @@ const EventDetailsPage = async ({
 
             <div>
               <p className="font-semibold">Fee</p>
-              <p>{event.fee != null ? (event.fee > 0 ? `৳${event.fee}` : "Free") : "N/A"}</p>
+              <p>{event.fee != null ? (event.fee > 0 ? `$ ${event.fee}` : "Free") : "N/A"}</p>
             </div>
           </div>
 
-          {/* Participation Button */}
-          {(event.fee ?? 0) > 0 && !isOwner && !participationStatus ? (
-             <div className="flex flex-col gap-2">
-               <p className="text-gray-400">
-                 This event requires a payment of ৳{event.fee}. After payment, your request stays pending until the host approves.
-               </p>
-               <CheckoutButton
-                 eventId={event.id}
-                 fee={event.fee ?? 0}
-                 label={event.type?.startsWith("PRIVATE") ? "Pay & Request" : "Pay & Join"}
-               />
-             </div>
+          {/* Participation: paid events only show checkout when not already paid / pending / joined */}
+          {showPaidCheckout ? (
+            <div className="flex flex-col gap-2">
+              <p className="text-gray-400">
+                This event requires a payment of ${event.fee}. After payment, your request stays pending until the host approves.
+              </p>
+              <CheckoutButton
+                eventId={event.id}
+                fee={event.fee ?? 0}
+                label={event.type?.startsWith("PRIVATE") ? "Pay & Request" : "Pay & Join"}
+              />
+            </div>
           ) : (
             <EventInteractionButton 
               eventId={event.id}

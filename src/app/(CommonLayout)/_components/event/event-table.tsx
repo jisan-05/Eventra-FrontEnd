@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/table";
 
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 import { Eye, Pencil, Star, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -42,9 +43,6 @@ export default function EventTable({ events }: EventTableProps) {
   };
 
   const handleDelete = async (id: string) => {
-  const confirmDelete = confirm("Are you sure to delete this event?");
-  if (!confirmDelete) return;
-
   try {
     setLoadingId(id);
 
@@ -108,7 +106,7 @@ export default function EventTable({ events }: EventTableProps) {
               </TableCell>
 
               <TableCell>
-                {event.fee > 0 ? `৳${event.fee}` : "Free"}
+                {event.fee > 0 ? `$${event.fee}` : "Free"}
               </TableCell>
 
               <TableCell className="text-right space-x-2">
@@ -134,14 +132,23 @@ export default function EventTable({ events }: EventTableProps) {
                 </Link>
 
                 {/* 🗑️ */}
-                <Button
-                  size="icon"
+                <ConfirmDialog
+                  title="Delete this event?"
+                  description="This permanently removes the event from the platform."
+                  confirmLabel="Delete"
                   variant="destructive"
-                  disabled={loadingId === event.id}
-                  onClick={() => handleDelete(event.id)}
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
+                  trigger={
+                    <Button
+                      size="icon"
+                      variant="destructive"
+                      disabled={loadingId === event.id}
+                      type="button"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  }
+                  onConfirm={() => handleDelete(event.id)}
+                />
               </TableCell>
             </TableRow>
           ))}

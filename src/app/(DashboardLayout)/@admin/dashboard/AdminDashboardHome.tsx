@@ -1,9 +1,16 @@
 import Link from "next/link";
-import { Users, CalendarDays, PlusCircle, LayoutDashboard } from "lucide-react";
+import {
+  Users,
+  CalendarDays,
+  PlusCircle,
+  LayoutDashboard,
+  BarChart3,
+} from "lucide-react";
 
 const links = [
   { href: "/dashboard/manage-users", title: "Manage users", desc: "Soft-delete accounts and monitor users.", icon: Users },
   { href: "/dashboard/manage-events", title: "Manage events", desc: "All events, feature on homepage, delete.", icon: CalendarDays },
+  { href: "/dashboard/reports", title: "Reports", desc: "Live platform metrics from the database.", icon: BarChart3 },
   { href: "/dashboard/create-event", title: "Create event", desc: "Create an event as admin.", icon: PlusCircle },
 ];
 

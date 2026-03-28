@@ -28,7 +28,7 @@ export default async function InvitationsPage() {
                 <p className="text-sm text-gray-600">Invited by: {inv.inviter?.name} ({inv.inviter?.email})</p>
                 <div className="mt-1 flex gap-2">
                   <span className="text-xs bg-gray-100 px-2 py-1 rounded">{inv.event.type.replace("_", " ")}</span>
-                  <span className="text-xs bg-gray-100 px-2 py-1 rounded">Fee: ৳{inv.event.fee}</span>
+                  <span className="text-xs bg-gray-100 px-2 py-1 rounded">Fee: ${inv.event.fee}</span>
                   <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">Status: {inv.status}</span>
                 </div>
               </div>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Textarea } from "@/components/ui/textarea";
@@ -15,7 +16,6 @@ export default function ReviewCard({ review }: { review: any }) {
   const router = useRouter();
 
   const handleDelete = async () => {
-    if (!confirm("Delete this review?")) return;
     setLoading(true);
     try {
       const res = await fetch(`/api/v1/reviews/${review.id}`, {
@@ -26,6 +26,8 @@ export default function ReviewCard({ review }: { review: any }) {
       if (res.ok && data.success) {
         toast.success("Review deleted");
         router.refresh();
+      } else {
+        toast.error(data.message || "Could not delete review");
       }
     } catch {
       toast.error("Error deleting review");
@@ -86,7 +88,18 @@ export default function ReviewCard({ review }: { review: any }) {
           <p className="text-gray-700 mt-1">{review.comment}</p>
           <div className="mt-4 flex gap-2">
             <Button size="sm" variant="outline" onClick={() => setEditing(true)}>Edit</Button>
-            <Button size="sm" variant="destructive" onClick={handleDelete} disabled={loading}>Delete</Button>
+            <ConfirmDialog
+              title="Delete this review?"
+              description="This permanently removes your review for this event."
+              confirmLabel="Delete"
+              variant="destructive"
+              trigger={
+                <Button size="sm" variant="destructive" disabled={loading} type="button">
+                  Delete
+                </Button>
+              }
+              onConfirm={handleDelete}
+            />
           </div>
         </>
       )}

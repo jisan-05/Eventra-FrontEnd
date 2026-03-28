@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 /**
  * Backup: confirms Stripe Checkout on the client when the URL includes success + session_id.
@@ -27,9 +28,22 @@ export default function StripePaymentConfirmClient() {
     })
       .then((r) => r.json())
       .then((d) => {
-        if (d?.success) router.refresh();
+        if (d?.success) {
+          const msg = typeof d?.message === "string" ? d.message.toLowerCase() : "";
+          toast.success(
+            msg.includes("already")
+              ? "You’re already paid for this event. Your spot is pending host approval."
+              : "Payment confirmed. Your request is pending host approval.",
+          );
+          router.replace(window.location.pathname);
+          router.refresh();
+        } else if (d?.message) {
+          toast.error(d.message);
+        }
       })
-      .catch(() => {});
+      .catch(() => {
+        toast.error("Could not confirm payment. Refresh the page or contact support.");
+      });
   }, [router]);
 
   return null;

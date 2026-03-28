@@ -18,6 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   const [loading, setLoading] = useState(false);
@@ -39,7 +40,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
 
     // ✅ simple validation
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match ❌");
+      toast.error("Passwords do not match");
       return;
     }
 
@@ -68,7 +69,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
 
       console.log("Signup success:", data);
 
-      alert("✅ Account created successfully!");
+      toast.success("Account created successfully");
 
       // ✅ reset form
       setFormData({
@@ -83,7 +84,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
       // window.location.href = "/login"
     } catch (err: any) {
       console.error(err);
-      alert(err.message);
+      toast.error(err.message || "Signup failed");
     } finally {
       setLoading(false);
     }
