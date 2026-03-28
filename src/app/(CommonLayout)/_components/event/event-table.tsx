@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/table";
 
 import { Button } from "@/components/ui/button";
-import { Eye, Pencil, Trash2 } from "lucide-react";
+import { Eye, Pencil, Star, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
@@ -24,6 +24,23 @@ export default function EventTable({ events }: EventTableProps) {
   const [eventList, setEventList] = useState(events);
   const [loadingId, setLoadingId] = useState<string | null>(null);
 
+  const handleFeature = async (id: string) => {
+    try {
+      const res = await fetch(`/api/v1/events/feature/${id}`, {
+        method: "PATCH",
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        toast.success("Featured event updated");
+      } else {
+        toast.error(data.message || "Could not feature event (public events only)");
+      }
+    } catch {
+      toast.error("Request failed");
+    }
+  };
+
   const handleDelete = async (id: string) => {
   const confirmDelete = confirm("Are you sure to delete this event?");
   if (!confirmDelete) return;
@@ -33,6 +50,7 @@ export default function EventTable({ events }: EventTableProps) {
 
     const res = await fetch(`/api/v1/events/admin/${id}`, {
       method: "DELETE",
+      credentials: "include",
     });
 
     const data = await res.json();
@@ -94,14 +112,21 @@ export default function EventTable({ events }: EventTableProps) {
               </TableCell>
 
               <TableCell className="text-right space-x-2">
-                {/* 👁️ */}
                 <Link href={`/events/${event.id}`}>
                   <Button size="icon" variant="outline">
                     <Eye className="w-4 h-4" />
                   </Button>
                 </Link>
 
-                {/* ✏️ */}
+                <Button
+                  size="icon"
+                  variant="secondary"
+                  title="Feature on homepage"
+                  onClick={() => handleFeature(event.id)}
+                >
+                  <Star className="w-4 h-4" />
+                </Button>
+
                 <Link href={`/dashboard/edit-event/${event.id}`}>
                   <Button size="icon" variant="secondary">
                     <Pencil className="w-4 h-4" />
