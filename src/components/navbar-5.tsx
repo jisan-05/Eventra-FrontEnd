@@ -31,9 +31,18 @@ import {
 
 import { authClient } from "@/lib/auth-client";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export const Navbar = () => {
   const [session, setSession] = useState<any>(null);
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    await authClient.signOut();
+    setSession(null);
+    router.push("/");
+    router.refresh();
+  };
 
   useEffect(() => {
     const getSession = async () => {
@@ -160,8 +169,8 @@ export const Navbar = () => {
                     </Link>
                   </DropdownMenuItem>
 
-                  <DropdownMenuItem>
-                    <button className="flex items-center w-full">
+                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                    <button type="button" className="flex items-center w-full" onClick={handleSignOut}>
                       <LogOut className="mr-2 h-4 w-4" /> Logout
                     </button>
                   </DropdownMenuItem>
@@ -194,8 +203,10 @@ export const Navbar = () => {
                   <DropdownMenuItem asChild>
                     <Link href="/dashboard">Dashboard</Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <button className="w-full text-left">Logout</button>
+                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                    <button type="button" className="w-full text-left" onClick={handleSignOut}>
+                      Logout
+                    </button>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -227,7 +238,9 @@ export const Navbar = () => {
                     <>
                       <Link href="/dashboard">Dashboard</Link>
                       <Link href="/profile">Profile</Link>
-                      <button className="text-left">Logout</button>
+                      <button type="button" className="text-left" onClick={handleSignOut}>
+                        Logout
+                      </button>
                     </>
                   )}
                 </div>
