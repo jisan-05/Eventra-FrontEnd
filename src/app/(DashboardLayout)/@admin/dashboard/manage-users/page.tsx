@@ -2,6 +2,8 @@
 import UserTable from "@/components/user-table";
 import { userService } from "@/services/user.services";
 
+export const dynamic = "force-dynamic";
+
 export default async function ManageUsersPage() {
   const users = await userService.getAllUser();
 

@@ -31,12 +31,13 @@ export default function UserTable({ users }: Props) {
       setLoadingId(id);
 
       const res = await fetch(`/api/v1/users/${id}`, {
-        method: "PATCH", // PATCH for soft delete in your backend
+        method: "DELETE",
+        credentials: "include",
       });
 
       const data = await res.json();
 
-      if (data.success) {
+      if (res.ok && data.success) {
         setUserList((prev) => prev.filter((u) => u.id !== id));
         toast.success("User deleted successfully");
       } else {
