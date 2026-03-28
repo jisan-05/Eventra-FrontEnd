@@ -1,6 +1,10 @@
 import CheckoutButton from "../../../../components/CheckoutButton";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
+import EventInteractionButton from "@/components/EventInteractionButton";
+import ReviewsSection from "@/components/ReviewsSection";
+import { userService } from "@/services/user.services";
+import { cookies } from "next/headers";
 
 type Event = {
   id: string;
@@ -49,18 +53,26 @@ const EventDetailsPage = async ({
     );
   }
 
-  // Participation button text
-  const participationText = () => {
-    if (event.type === "PUBLIC") {
-      return event.fee && event.fee > 0
-        ? "Payment required → Pending approval"
-        : "Join instantly";
-    } else {
-      return event.fee && event.fee > 0
-        ? "Payment required → Pending approval"
-        : "Request to join → Pending approval";
+  const { data: sessionData } = await userService.getSession();
+  const currentUser = sessionData?.user;
+
+  let participationStatus = null;
+  if (currentUser) {
+    try {
+      const cookieStore = await cookies();
+      const pRes = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/v1/participations/my-participations`, {
+        headers: { Cookie: cookieStore.toString() },
+        cache: "no-store",
+      });
+      const myParticipations = await pRes.json();
+      const currentP = myParticipations?.data?.find((p: any) => p.eventId === id);
+      participationStatus = currentP ? currentP.status : null;
+    } catch (e) {
+      console.error(e);
     }
-  };
+  }
+
+  const isOwner = currentUser?.id === event.ownerId;
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 py-10 px-4">
@@ -118,13 +130,22 @@ const EventDetailsPage = async ({
           </div>
 
           {/* Participation Button */}
-          {event.fee && event.fee > 0 ? (
-            <CheckoutButton eventId={event.id} fee={event.fee} />
+          {event.fee && event.fee > 0 && !isOwner && !participationStatus ? (
+             <div className="flex flex-col gap-2">
+               <p className="text-gray-400">This event requires a payment of ৳{event.fee}. Status will become Pending approval afterwards.</p>
+               <CheckoutButton eventId={event.id} fee={event.fee} />
+             </div>
           ) : (
-            <button className="w-full md:w-auto mt-6 px-6 py-3 rounded-xl bg-yellow-500 text-black font-semibold hover:bg-yellow-600 transition">
-              {participationText()}
-            </button>
+            <EventInteractionButton 
+              eventId={event.id}
+              type={event.type || "PUBLIC_FREE"}
+              isOwner={isOwner}
+              participationStatus={participationStatus}
+              fee={event.fee || 0}
+            />
           )}
+
+          <ReviewsSection eventId={event.id} isLogged={!!currentUser} />
         </div>
       </div>
     </div>

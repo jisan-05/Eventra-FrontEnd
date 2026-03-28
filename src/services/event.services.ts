@@ -6,10 +6,11 @@ const BASE_URL =
 
 export const eventService = {
   // ✅ Get All Events (SSR)
-  async getEvents() {
+  async getEvents(query?: Record<string, string>) {
     const cookieStore = await cookies();
+    const queryString = query ? '?' + new URLSearchParams(query as Record<string, string>).toString() : '';
 
-    const res = await fetch(`${BASE_URL}/api/v1/events`, {
+    const res = await fetch(`${BASE_URL}/api/v1/events${queryString}`, {
       cache: "no-store",
       headers: {
         Cookie: cookieStore.toString(),

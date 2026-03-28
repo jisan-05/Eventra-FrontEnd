@@ -19,10 +19,10 @@ import {
 const navItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "My Events", href: "/dashboard/myevents", icon: CalendarDays },
-  { name: "Joined Events", href: "/dashboard/view-all-orders", icon: Users },
+  { name: "Joined Events", href: "/dashboard/joined-events", icon: Users },
   { name: "Invitations", href: "/dashboard/invitations", icon: Mail },
-  { name: "Reviews", href: "/dashboard/add-category", icon: Star },
-  { name: "Settings", href: "/dashboard/manage-category", icon: Settings },
+  { name: "Reviews", href: "/dashboard/reviews", icon: Star },
+  { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
