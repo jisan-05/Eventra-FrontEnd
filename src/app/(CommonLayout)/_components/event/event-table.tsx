@@ -125,11 +125,7 @@ export default function EventTable({ events }: EventTableProps) {
                   <Star className="w-4 h-4" />
                 </Button>
 
-                <Link href={`/dashboard/edit-event/${event.id}`}>
-                  <Button size="icon" variant="secondary">
-                    <Pencil className="w-4 h-4" />
-                  </Button>
-                </Link>
+                
 
                 {/* 🗑️ */}
                 <ConfirmDialog

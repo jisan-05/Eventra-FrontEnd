@@ -81,7 +81,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
       });
 
       // 👉 redirect
-      // window.location.href = "/login"
+      window.location.href = "/"
     } catch (err: any) {
       console.error(err);
       toast.error(err.message || "Signup failed");
@@ -179,9 +179,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                   {loading ? "Creating..." : "Create Account"}
                 </Button>
 
-                <Button variant="outline" type="button">
-                  Sign up with Google
-                </Button>
+               
 
                 <FieldDescription className="px-6 text-center">
                   Already have an account? <Link href="/login">Login</Link>

@@ -31,7 +31,7 @@ export default function EventInteractionButton({ eventId, type, isOwner, partici
   }
 
   if (participationStatus === "APPROVED") {
-    return <Button variant="outline" disabled>You have joined</Button>;
+    return <Button variant="outline" disabled className="text-black">You have Already joined</Button>;
   }
 
   if (participationStatus === "PENDING") {

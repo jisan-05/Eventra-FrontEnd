@@ -30,7 +30,7 @@ function HeroSlideFrame({
   bgImage?: string;
 }) {
   return (
-    <div className="relative min-h-[min(70vh,680px)] w-full overflow-hidden text-zinc-50">
+    <div className="relative min-h-[min(86vh)] w-full overflow-hidden text-zinc-50">
       {bgImage && (
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat [animation:home-hero-pan_28s_ease-in-out_infinite_alternate]"
