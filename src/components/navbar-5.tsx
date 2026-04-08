@@ -33,6 +33,7 @@ import { authClient } from "@/lib/auth-client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import SafeUserImage from "@/components/SafeUserImage";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export const Navbar = () => {
   const [session, setSession] = useState<any>(null);
@@ -58,7 +59,7 @@ export const Navbar = () => {
   const user = session?.data?.user;
 
   return (
-    <header className="sticky top-0 z-50 bg-white shadow-sm">
+    <header className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b border-border">
       <div className="container mx-auto px-4">
         <nav className="flex items-center justify-between py-4">
           {/* 🔹 Logo */}
@@ -133,6 +134,7 @@ export const Navbar = () => {
 
           {/* 🔹 Right Section Desktop */}
           <div className="hidden lg:flex items-center gap-3">
+            <ThemeToggle />
             {!isLoggedIn ? (
               <>
                 <Link href="/login">
@@ -182,6 +184,7 @@ export const Navbar = () => {
 
           {/* 🔹 Mobile Section */}
           <div className="lg:hidden flex items-center gap-2">
+            <ThemeToggle />
             {/* ✅ Logged in → show dropdown */}
             {isLoggedIn && (
               <DropdownMenu>

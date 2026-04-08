@@ -17,16 +17,16 @@ export default async function JoinedEventsPage() {
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">Joined events</h1>
-      <p className="text-gray-600 text-sm">Events you are approved to attend.</p>
+      <p className="text-muted-foreground text-sm">Events you are approved to attend.</p>
       {approved.length === 0 ? (
-        <p className="text-gray-500">No joined events yet.</p>
+        <p className="text-muted-foreground">No joined events yet.</p>
       ) : (
         <ul className="space-y-3">
           {approved.map((p) => (
-            <li key={p.id} className="bg-white border rounded-xl p-4 flex justify-between items-center gap-4">
+            <li key={p.id} className="bg-card border border-border rounded-xl p-4 flex justify-between items-center gap-4">
               <div>
                 <h2 className="font-semibold">{p.event.title}</h2>
-                <p className="text-sm text-gray-500">{new Date(p.event.date).toLocaleString()}</p>
+                <p className="text-sm text-muted-foreground">{new Date(p.event.date).toLocaleString()}</p>
               </div>
               <Link href={`/events/${p.event.id}`} className="text-amber-600 text-sm font-medium hover:underline">
                 Open

@@ -30,7 +30,7 @@ const testimonials = [
 export default function HomeTestimonials() {
   return (
     <section
-      className="relative overflow-hidden border-y border-slate-200/80 bg-gradient-to-b from-white via-slate-50 to-blue-50/25 py-20 md:py-24"
+      className="relative overflow-hidden border-y border-border bg-background py-20 md:py-24"
       id="testimonials"
     >
       <div
@@ -44,13 +44,13 @@ export default function HomeTestimonials() {
 
       <div className="container relative mx-auto px-4">
         <Reveal className="mb-14 text-center">
-          <span className="inline-flex rounded-full border border-blue-200/90 bg-blue-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-blue-900 shadow-sm">
+          <span className="inline-flex rounded-full border border-border bg-card px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-foreground shadow-sm">
             Testimonials
           </span>
-          <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl md:text-[2.35rem]">
+          <h2 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-[2.35rem]">
             Trusted by hosts and attendees
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-pretty text-base text-slate-600">
+          <p className="mx-auto mt-4 max-w-xl text-pretty text-base text-muted-foreground">
             Real feedback from teams using Eventra to plan, sell, and join
             events without friction.
           </p>
@@ -59,15 +59,15 @@ export default function HomeTestimonials() {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-5">
           {testimonials.map((t, i) => (
             <Reveal key={t.name} delay={0.06 + i * 0.06} y={18}>
-              <figure className="group flex h-full flex-col rounded-2xl border border-slate-200/90 bg-white p-8 shadow-[0_4px_28px_-8px_rgba(15,23,42,0.08)] backdrop-blur-sm transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-1 hover:border-blue-200/90 hover:shadow-[0_22px_52px_-14px_rgba(30,58,138,0.12)]">
+              <figure className="group flex h-full flex-col rounded-2xl border border-border bg-card p-8 shadow-[0_4px_28px_-8px_rgba(15,23,42,0.08)] backdrop-blur-sm transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-1 hover:border-blue-200/90 hover:shadow-[0_22px_52px_-14px_rgba(30,58,138,0.12)]">
                 <Quote
                   className="mb-4 size-9 text-blue-600 transition-transform duration-300 group-hover:scale-105"
                   aria-hidden
                 />
-                <blockquote className="flex-1 text-sm leading-relaxed text-slate-600">
+                <blockquote className="flex-1 text-sm leading-relaxed text-muted-foreground">
                   “{t.quote}”
                 </blockquote>
-                <figcaption className="mt-6 flex items-center gap-3 border-t border-slate-100 pt-6">
+                <figcaption className="mt-6 flex items-center gap-3 border-t border-border pt-6">
                   <div
                     className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-100 to-sky-100 text-sm font-semibold text-blue-950 ring-1 ring-blue-200/70 transition-transform duration-300 group-hover:scale-105"
                     aria-hidden
@@ -75,10 +75,10 @@ export default function HomeTestimonials() {
                     {t.initials}
                   </div>
                   <div>
-                    <div className="text-sm font-semibold text-slate-900">
+                    <div className="text-sm font-semibold text-foreground">
                       {t.name}
                     </div>
-                    <div className="text-xs text-slate-600">{t.role}</div>
+                    <div className="text-xs text-muted-foreground">{t.role}</div>
                   </div>
                 </figcaption>
               </figure>

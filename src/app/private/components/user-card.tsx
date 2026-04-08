@@ -14,16 +14,16 @@ interface UserCardProps {
 
 export default function UserCard({ user }: UserCardProps) {
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300">
+    <div className="bg-card border border-border rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300">
       <div className="flex items-center gap-4">
-        <div className="relative w-16 h-16 rounded-full overflow-hidden bg-gray-200">
-          <div className="w-full h-full flex items-center justify-center text-2xl font-semibold text-gray-500">
+        <div className="relative w-16 h-16 rounded-full overflow-hidden bg-muted">
+          <div className="w-full h-full flex items-center justify-center text-2xl font-semibold text-muted-foreground">
             {user.name.charAt(0).toUpperCase()}
           </div>
         </div>
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-gray-800">{user.name}</h3>
-          <p className="text-sm text-gray-500">{user.email}</p>
+          <h3 className="text-lg font-semibold text-foreground">{user.name}</h3>
+          <p className="text-sm text-muted-foreground">{user.email}</p>
           <div className="flex items-center gap-2 mt-1">
             <span
               className={`text-xs px-2 py-1 rounded-full ${
@@ -37,7 +37,7 @@ export default function UserCard({ user }: UserCardProps) {
           </div>
         </div>
       </div>
-      <div className="mt-4 pt-4 border-t text-xs text-gray-400">
+      <div className="mt-4 pt-4 border-t border-border text-xs text-muted-foreground">
         <p>Joined: {new Date(user.createdAt).toLocaleDateString()}</p>
       </div>
     </div>

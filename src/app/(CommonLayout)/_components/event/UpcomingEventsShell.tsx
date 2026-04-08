@@ -6,9 +6,9 @@ import EventsSlider from "./EventsSlider";
 
 export default function UpcomingEventsShell({ events }: { events: any[] }) {
   return (
-    <section className="relative overflow-hidden py-14 md:py-20">
+    <section className="relative overflow-hidden bg-background py-14 md:py-20">
       <div
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_95%_65%_at_50%_-35%,rgba(59,130,246,0.12),transparent_55%),linear-gradient(to_bottom,rgba(255,255,255,0.98),rgba(239,246,255,0.5)_42%,transparent)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_95%_65%_at_50%_-35%,rgba(59,130,246,0.15),transparent_55%)] dark:bg-[radial-gradient(ellipse_95%_65%_at_50%_-35%,rgba(59,130,246,0.2),transparent_55%)]"
         aria-hidden
       />
       <div
@@ -17,13 +17,13 @@ export default function UpcomingEventsShell({ events }: { events: any[] }) {
       />
       <div className="container relative mx-auto px-4">
         <Reveal className="mb-10 text-center">
-          <span className="mb-3 inline-flex rounded-full border border-blue-200/90 bg-blue-50 px-3 py-1 text-[0.6875rem] font-semibold uppercase tracking-widest text-blue-900">
+          <span className="mb-3 inline-flex rounded-full border border-border bg-card px-3 py-1 text-[0.6875rem] font-semibold uppercase tracking-widest text-foreground">
             Live soon
           </span>
-          <h2 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+          <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
             Upcoming public events
           </h2>
-          <p className="mx-auto mt-3 max-w-xl text-pretty text-slate-600">
+          <p className="mx-auto mt-3 max-w-xl text-pretty text-muted-foreground">
             Nine upcoming public events — swipe or scroll to explore.
           </p>
         </Reveal>

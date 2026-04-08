@@ -63,7 +63,7 @@ export default function SettingsPage() {
     <div className="p-6 max-w-lg">
       <h1 className="text-2xl font-bold mb-6">Settings</h1>
       
-      <form onSubmit={handleUpdate} className="space-y-4 bg-white p-6 rounded-xl border shadow-sm">
+      <form onSubmit={handleUpdate} className="space-y-4 bg-card p-6 rounded-xl border border-border shadow-sm">
         <div>
           <label className="block text-sm font-medium mb-1">Name</label>
           <Input 
@@ -86,10 +86,10 @@ export default function SettingsPage() {
 
       <div className="mt-10">
         <h2 className="text-lg font-semibold mb-2">Notifications (local preferences)</h2>
-        <p className="text-sm text-gray-500 mb-4">
+        <p className="text-sm text-muted-foreground mb-4">
           Stored in this browser only. Use as a reminder for what you care about; email delivery is not wired yet.
         </p>
-        <div className="bg-white p-6 rounded-xl border shadow-sm space-y-4">
+        <div className="bg-card p-6 rounded-xl border border-border shadow-sm space-y-4">
           <label className="flex items-center gap-3 cursor-pointer">
             <input
               type="checkbox"

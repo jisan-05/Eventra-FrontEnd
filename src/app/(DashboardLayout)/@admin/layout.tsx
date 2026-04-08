@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const navItems = [
   { name: "Dashboard", href: "/dashboard", icon: "🏠" },
@@ -18,7 +19,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
+    <div className="min-h-screen bg-background text-foreground flex">
       {/* Mobile Overlay */}
       {open && (
         <div
@@ -29,7 +30,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed z-50 top-0 left-0 h-full w-64 bg-white/90 backdrop-blur-xl border-r shadow-lg transition-transform duration-300
+        className={`fixed z-50 top-0 left-0 h-full w-64 bg-card/95 backdrop-blur-xl border-r border-border shadow-lg transition-transform duration-300
           ${open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
       >
         {/* Logo */}
@@ -53,8 +54,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all
                   ${
                     isActive
-                      ? "bg-blue-500 text-white shadow"
-                      : "text-gray-700 hover:bg-gray-200/60 hover:text-black"
+                      ? "bg-primary text-primary-foreground shadow"
+                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                   }`}
               >
                 <span>{item.icon}</span>
@@ -67,10 +68,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         {/* Sidebar Footer */}
         <div className="absolute bottom-0 w-full p-4 border-t">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gray-300" />
+            <div className="w-10 h-10 rounded-full bg-muted" />
             <div>
               <p className="text-sm font-semibold">Jisan</p>
-              <p className="text-xs text-gray-500">Admin</p>
+              <p className="text-xs text-muted-foreground">Admin</p>
             </div>
           </div>
         </div>
@@ -79,7 +80,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col w-full lg:ml-64">
         {/* Topbar */}
-        <header className="h-16 bg-white/90 backdrop-blur-xl border-b flex items-center justify-between px-4 lg:px-6 sticky top-0 z-30">
+        <header className="h-16 bg-card/95 backdrop-blur-xl border-b border-border flex items-center justify-between px-4 lg:px-6 sticky top-0 z-30">
           {/* Left */}
           <div className="flex items-center gap-3">
             <button className="lg:hidden" onClick={() => setOpen(true)}>
@@ -90,7 +91,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
           {/* Right placeholder (profile) */}
           <div className="flex items-center gap-4">
-            <div className="w-9 h-9 rounded-full bg-gray-300 cursor-pointer" />
+            <ThemeToggle />
+            <div className="w-9 h-9 rounded-full bg-muted cursor-pointer" />
           </div>
         </header>
 

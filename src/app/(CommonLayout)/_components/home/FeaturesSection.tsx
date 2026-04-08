@@ -64,7 +64,7 @@ const features = [
 export default function FeaturesSection() {
   return (
     <section
-      className="relative overflow-hidden bg-gradient-to-b from-slate-100/80 via-white to-blue-50/30 py-20 md:py-24"
+      className="relative overflow-hidden bg-background py-20 md:py-24"
       id="features"
     >
       <div
@@ -82,13 +82,13 @@ export default function FeaturesSection() {
 
       <div className="container relative mx-auto px-4">
         <Reveal className="mb-14 text-center">
-          <span className="inline-flex rounded-full border border-blue-200/80 bg-blue-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-blue-900 shadow-sm shadow-slate-900/5">
+          <span className="inline-flex rounded-full border border-border bg-card px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-foreground shadow-sm shadow-slate-900/5">
             Platform Features
           </span>
-          <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl md:text-[2.35rem]">
+          <h2 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-[2.35rem]">
             Everything you need to run great events
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-pretty text-base text-slate-600">
+          <p className="mx-auto mt-4 max-w-xl text-pretty text-base text-muted-foreground">
             Eventra brings together the tools that hosts and attendees actually
             need — without the bloat.
           </p>
@@ -97,16 +97,16 @@ export default function FeaturesSection() {
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
           {features.map((f, i) => (
             <Reveal key={f.title} delay={0.06 + i * 0.05} y={18}>
-              <div className="group relative flex h-full flex-col gap-4 rounded-2xl border border-slate-200/90 bg-white p-7 shadow-[0_2px_28px_-6px_rgba(15,23,42,0.08)] backdrop-blur-sm transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-1 hover:border-blue-300/55 hover:bg-blue-50/30 hover:shadow-[0_20px_50px_-12px_rgba(30,58,138,0.12)]">
+              <div className="group relative flex h-full flex-col gap-4 rounded-2xl border border-border bg-card p-7 shadow-[0_2px_28px_-6px_rgba(15,23,42,0.08)] backdrop-blur-sm transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-1 hover:border-blue-300/55 hover:bg-accent/50 hover:shadow-[0_20px_50px_-12px_rgba(30,58,138,0.12)]">
                 <div
                   className={`flex h-11 w-11 items-center justify-center rounded-xl border ${f.border} ${f.bg} ${f.color} transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-3`}
                 >
                   <f.icon className="size-5" />
                 </div>
-                <h3 className="text-[0.9375rem] font-semibold text-slate-900">
+                <h3 className="text-[0.9375rem] font-semibold text-foreground">
                   {f.title}
                 </h3>
-                <p className="text-sm leading-relaxed text-slate-600">{f.desc}</p>
+                <p className="text-sm leading-relaxed text-muted-foreground">{f.desc}</p>
               </div>
             </Reveal>
           ))}

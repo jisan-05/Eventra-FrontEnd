@@ -51,7 +51,7 @@ export default function UserTable({ users }: Props) {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-md border">
+    <div className="bg-card rounded-2xl shadow-md border border-border">
       <Table>
         <TableHeader>
           <TableRow>
@@ -81,7 +81,7 @@ export default function UserTable({ users }: Props) {
                   className={`px-2 py-1 text-xs rounded-full ${
                     user.role === "ADMIN"
                       ? "bg-purple-100 text-purple-600"
-                      : "bg-gray-100 text-gray-600"
+                      : "bg-muted text-muted-foreground"
                   }`}
                 >
                   {user.role}

@@ -16,16 +16,16 @@ export default async function InvitationsPage() {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-2">Invitations</h1>
-      <p className="text-gray-600 text-sm mb-6">Pending invites to private or paid events. Accept, decline, or pay when required.</p>
+      <p className="text-muted-foreground text-sm mb-6">Pending invites to private or paid events. Accept, decline, or pay when required.</p>
       {invitations.length === 0 ? (
-        <p className="text-gray-500">You have no pending invitations.</p>
+        <p className="text-muted-foreground">You have no pending invitations.</p>
       ) : (
         <div className="space-y-4">
           {invitations.map((inv: any) => (
-            <div key={inv.id} className="p-4 bg-white border rounded-xl shadow-sm flex items-center justify-between flex-wrap gap-4">
+            <div key={inv.id} className="p-4 bg-card border border-border rounded-xl shadow-sm flex items-center justify-between flex-wrap gap-4">
               <div>
                 <h3 className="font-semibold text-lg">{inv.event.title}</h3>
-                <p className="text-sm text-gray-600">Invited by: {inv.inviter?.name} ({inv.inviter?.email})</p>
+                <p className="text-sm text-muted-foreground">Invited by: {inv.inviter?.name} ({inv.inviter?.email})</p>
                 <div className="mt-1 flex gap-2">
                   <span className="text-xs bg-gray-100 px-2 py-1 rounded">{inv.event.type.replace("_", " ")}</span>
                   <span className="text-xs bg-gray-100 px-2 py-1 rounded">Fee: ${inv.event.fee}</span>

@@ -127,11 +127,11 @@ export default function EventForm({ eventId, title = "Create Event" }: Props) {
   };
 
   if (loadingEvent) {
-    return <div className="max-w-2xl mx-auto p-6 text-center text-gray-600">Loading event…</div>;
+    return <div className="max-w-2xl mx-auto p-6 text-center text-muted-foreground">Loading event…</div>;
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded-2xl shadow">
+    <div className="max-w-2xl mx-auto p-6 bg-card rounded-2xl border border-border shadow">
       <h2 className="text-2xl font-bold mb-6 text-center">{title}</h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">

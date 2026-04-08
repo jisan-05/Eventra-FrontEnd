@@ -8,7 +8,7 @@ import CallToAction from "./_components/home/CallToAction";
 
 export default async function Home() {
   return (
-    <div className="w-full bg-gradient-to-b from-white via-slate-50 to-white">
+    <div className="w-full bg-background">
       <FeaturedHero />
       <FeaturesSection />
       <EventsPage />
