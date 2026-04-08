@@ -38,6 +38,20 @@ import { ThemeToggle } from "@/components/theme-toggle";
 export const Navbar = () => {
   const [session, setSession] = useState<any>(null);
   const router = useRouter();
+  const loggedOutRoutes = [
+    { href: "/", label: "Home" },
+    { href: "/events", label: "Events" },
+    { href: "/about", label: "About" },
+    { href: "/contact", label: "Contact" },
+  ];
+  const loggedInRoutes = [
+    { href: "/", label: "Home" },
+    { href: "/events", label: "Events" },
+    { href: "/dashboard", label: "Dashboard" },
+    { href: "/profile", label: "Profile" },
+    { href: "/contact", label: "Contact" },
+    { href: "/privacy", label: "Privacy" },
+  ];
 
   const handleSignOut = async () => {
     await authClient.signOut();
@@ -57,10 +71,11 @@ export const Navbar = () => {
 
   const isLoggedIn = session?.data?.user;
   const user = session?.data?.user;
+  const navRoutes = isLoggedIn ? loggedInRoutes : loggedOutRoutes;
 
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b border-border">
-      <div className="container mx-auto px-4">
+      <div className="w-full px-4 md:px-6 lg:px-8">
         <nav className="flex items-center justify-between py-4">
           {/* 🔹 Logo */}
           <Link href="/" className="flex items-center gap-2">
@@ -77,30 +92,21 @@ export const Navbar = () => {
           {/* 🔹 Desktop Menu */}
           <NavigationMenu className="hidden lg:block">
             <NavigationMenuList>
-              <NavigationMenuItem>
-                <NavigationMenuLink asChild>
-                  <Link href="/" className={navigationMenuTriggerStyle()}>
-                    Home
-                  </Link>
-                </NavigationMenuLink>
-              </NavigationMenuItem>
+              {navRoutes.map((route) => (
+                <NavigationMenuItem key={route.href}>
+                  <NavigationMenuLink asChild>
+                    <Link href={route.href} className={navigationMenuTriggerStyle()}>
+                      {route.label}
+                    </Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              ))}
 
-              <NavigationMenuItem>
-                <NavigationMenuLink asChild>
-                  <Link href="/events" className={navigationMenuTriggerStyle()}>
-                    Events
-                  </Link>
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-
-              {!isLoggedIn ? (
+              {!isLoggedIn && (
                 <>
                   <NavigationMenuItem>
                     <NavigationMenuLink asChild>
-                      <Link
-                        href="/login"
-                        className={navigationMenuTriggerStyle()}
-                      >
+                      <Link href="/login" className={navigationMenuTriggerStyle()}>
                         Login
                       </Link>
                     </NavigationMenuLink>
@@ -117,17 +123,6 @@ export const Navbar = () => {
                     </NavigationMenuLink>
                   </NavigationMenuItem>
                 </>
-              ) : (
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <Link
-                      href="/dashboard"
-                      className={navigationMenuTriggerStyle()}
-                    >
-                      Dashboard
-                    </Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
               )}
             </NavigationMenuList>
           </NavigationMenu>
@@ -230,8 +225,11 @@ export const Navbar = () => {
                 </SheetHeader>
 
                 <div className="flex flex-col gap-4 mt-6">
-                  <Link href="/">Home</Link>
-                  <Link href="/events">Events</Link>
+                  {navRoutes.map((route) => (
+                    <Link key={route.href} href={route.href}>
+                      {route.label}
+                    </Link>
+                  ))}
 
                   {!isLoggedIn ? (
                     <>
@@ -240,8 +238,6 @@ export const Navbar = () => {
                     </>
                   ) : (
                     <>
-                      <Link href="/dashboard">Dashboard</Link>
-                      <Link href="/profile">Profile</Link>
                       <button type="button" className="text-left" onClick={handleSignOut}>
                         Logout
                       </button>
