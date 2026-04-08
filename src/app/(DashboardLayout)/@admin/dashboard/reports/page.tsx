@@ -70,6 +70,13 @@ export default async function AdminReportsPage() {
     );
   }
 
+  const chartRows = Object.entries(stats.eventsByType).map(([type, count]) => ({
+    type: EVENT_LABELS[type] ?? type,
+    count,
+  }));
+  const maxTypeCount = Math.max(...chartRows.map((row) => row.count), 1);
+  const pieTotal = chartRows.reduce((sum, row) => sum + row.count, 0) || 1;
+
   return (
     <div className="mx-auto max-w-6xl space-y-8">
       <div className="flex items-center gap-3">
@@ -190,6 +197,43 @@ export default async function AdminReportsPage() {
               ))}
             </tbody>
           </table>
+        </div>
+      </section>
+
+      <section className="grid gap-6 lg:grid-cols-2">
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <h3 className="font-semibold text-slate-900 mb-4">Bar Chart · Events by Type</h3>
+          <div className="space-y-3">
+            {chartRows.map((row) => (
+              <div key={row.type}>
+                <div className="mb-1 flex items-center justify-between text-xs text-slate-600">
+                  <span>{row.type}</span>
+                  <span>{row.count}</span>
+                </div>
+                <div className="h-2 w-full rounded bg-slate-100">
+                  <div
+                    className="h-2 rounded bg-blue-500"
+                    style={{ width: `${Math.max((row.count / maxTypeCount) * 100, 4)}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <h3 className="font-semibold text-slate-900 mb-4">Pie Chart · Event Type Share</h3>
+          <div className="space-y-3">
+            {chartRows.map((row) => {
+              const pct = ((row.count / pieTotal) * 100).toFixed(1);
+              return (
+                <div key={row.type} className="flex items-center justify-between text-sm">
+                  <span className="text-slate-700">{row.type}</span>
+                  <span className="font-medium text-slate-900">{pct}%</span>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </section>
 

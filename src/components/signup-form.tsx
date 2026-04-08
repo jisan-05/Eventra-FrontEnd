@@ -19,9 +19,14 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
+import { authClient } from "@/lib/auth-client";
+import { Chrome, Facebook } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   const [loading, setLoading] = useState(false);
+  const [socialLoading, setSocialLoading] = useState<"google" | "facebook" | null>(null);
+  const router = useRouter();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -38,9 +43,25 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    // ✅ simple validation
+    const normalizedEmail = formData.email.trim();
+    if (!formData.name.trim()) {
+      toast.error("Full name is required");
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+    if (formData.password.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
     if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords do not match");
+      return;
+    }
+    if (formData.image && !/^https?:\/\/.+/i.test(formData.image)) {
+      toast.error("Profile image must be a valid URL (http/https)");
       return;
     }
 
@@ -54,8 +75,8 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
         },
         credentials: "include",
         body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
+          name: formData.name.trim(),
+          email: normalizedEmail,
           password: formData.password,
           image: formData.image, 
         }),
@@ -80,8 +101,8 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
         image: "",
       });
 
-      // 👉 redirect
-      window.location.href = "/"
+      router.push("/");
+      router.refresh();
     } catch (err: any) {
       console.error(err);
       toast.error(err.message || "Signup failed");
@@ -90,8 +111,22 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
     }
   };
 
+  const handleSocialSignup = async (provider: "google" | "facebook") => {
+    try {
+      setSocialLoading(provider);
+      await authClient.signIn.social({
+        provider,
+        callbackURL: "/",
+      });
+    } catch (err: any) {
+      toast.error(err?.message || `${provider} signup is not configured yet.`);
+    } finally {
+      setSocialLoading(null);
+    }
+  };
+
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="w-full max-w-2xl mx-auto">
       <Card {...props}>
         <CardHeader>
           <CardTitle>Create an account</CardTitle>
@@ -101,6 +136,30 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
         </CardHeader>
 
         <CardContent>
+          <div className="mb-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => handleSocialSignup("google")}
+              disabled={socialLoading !== null}
+              className="w-full"
+            >
+              <Chrome className="mr-2 h-4 w-4" />
+              {socialLoading === "google" ? "Connecting..." : "Continue with Google"}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => handleSocialSignup("facebook")}
+              disabled={socialLoading !== null}
+              className="w-full"
+            >
+              <Facebook className="mr-2 h-4 w-4" />
+              {socialLoading === "facebook" ? "Connecting..." : "Continue with Facebook"}
+            </Button>
+          </div>
+          <p className="mb-4 text-center text-xs text-muted-foreground">or create account with email</p>
+
           <form onSubmit={handleSubmit}>
             <FieldGroup>
               {/* Name */}

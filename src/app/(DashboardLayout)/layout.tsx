@@ -4,7 +4,15 @@ import { authClient } from "@/lib/auth-client";
 import { useEffect, useState } from "react";
 
 
-const DashboardLayout = ({admin,user}:{admin:React.ReactNode;user:React.ReactNode}) => {
+const DashboardLayout = ({
+  admin,
+  user,
+  manager,
+}: {
+  admin: React.ReactNode;
+  user: React.ReactNode;
+  manager: React.ReactNode;
+}) => {
     const [session, setSession] = useState<any>(null);
     
       useEffect(() => {
@@ -21,6 +29,7 @@ const DashboardLayout = ({admin,user}:{admin:React.ReactNode;user:React.ReactNod
     <div>
       {Roles === "ADMIN" && admin}
       {Roles === "USER" && user}
+      {Roles === "MANAGER" && (manager || user)}
     </div>
   );
 };

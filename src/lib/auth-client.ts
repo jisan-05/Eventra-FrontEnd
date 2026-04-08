@@ -44,10 +44,14 @@
   
 import { createAuthClient } from "better-auth/react";
 
-const API_URL = process.env.NEXT_PUBLIC_APP_URL
+const FRONTEND_URL =
+  typeof window !== "undefined"
+    ? window.location.origin
+    : process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000";
 
 export const authClient = createAuthClient({
-  baseURL: typeof window !== "undefined" ? window.location.origin : `${API_URL}`,
+  // Keep auth on same origin so Next rewrites handle backend proxying.
+  baseURL: `${FRONTEND_URL}/api/auth`,
   fetchOptions: {
     credentials: "include",
   },

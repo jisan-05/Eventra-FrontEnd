@@ -15,6 +15,7 @@ import {
   Search,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import DashboardProfileMenu from "@/components/dashboard-profile-menu";
 
 // Sidebar nav items
 const navItems = [
@@ -116,7 +117,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           {/* Right */}
           <div className="flex items-center gap-4">
             <ThemeToggle />
-            <div className="w-9 h-9 rounded-full bg-muted cursor-pointer" />
+            <DashboardProfileMenu />
           </div>
         </header>
 
