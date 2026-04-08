@@ -10,9 +10,23 @@ interface EventCardProps {
 
 export default function EventCard({ event }: EventCardProps) {
   const isPaid = event.fee > 0;
+  const imageUrl = event.image || event.banner || "/logo.avif";
+  const rating =
+    typeof event.averageRating === "number"
+      ? event.averageRating.toFixed(1)
+      : typeof event.rating === "number"
+      ? event.rating.toFixed(1)
+      : "N/A";
 
   return (
-    <Card className="h-full rounded-2xl border border-border bg-card shadow-[0_4px_28px_-8px_rgba(15,23,42,0.08)] backdrop-blur-sm transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-0.5 hover:border-blue-300/60 hover:shadow-[0_22px_44px_-12px_rgba(30,58,138,0.12)]">
+    <Card className="h-full overflow-hidden rounded-2xl border border-border bg-card shadow-[0_4px_28px_-8px_rgba(15,23,42,0.08)] backdrop-blur-sm transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-0.5 hover:border-blue-300/60 hover:shadow-[0_22px_44px_-12px_rgba(30,58,138,0.12)]">
+      <div className="h-44 w-full bg-muted">
+        <img
+          src={imageUrl}
+          alt={event.title || "Event image"}
+          className="h-full w-full object-cover"
+        />
+      </div>
       {/* Header */}
       <CardHeader className="flex flex-row items-center justify-between">
         <span
@@ -35,8 +49,8 @@ export default function EventCard({ event }: EventCardProps) {
         <h2 className="line-clamp-1 text-lg font-semibold text-foreground">{event.title}</h2>
         <p className="text-xs text-muted-foreground">Organizer: {event.owner?.name ?? "—"}</p>
 
-        <p className="line-clamp-2 text-sm text-muted-foreground">
-          {event.description}
+        <p className="line-clamp-2 min-h-10 text-sm text-muted-foreground">
+          {event.description || "No description provided for this event."}
         </p>
 
         {/* Info */}
@@ -52,8 +66,14 @@ export default function EventCard({ event }: EventCardProps) {
           </div>
         )}
 
+        <div className="grid grid-cols-2 gap-2 rounded-lg bg-muted/40 p-3 text-xs text-muted-foreground">
+          <span>Price: {isPaid ? `$${event.fee}` : "Free"}</span>
+          <span>Rating: {rating}</span>
+          <span className="col-span-2 line-clamp-1">Location: {event.venue || "Online / TBA"}</span>
+        </div>
+
         {/* Footer */}
-        <div className="flex items-center justify-between pt-3">
+        <div className="flex items-center justify-between pt-1">
           <span className="text-sm font-medium text-foreground">
             {isPaid ? `$${event.fee}` : "Free"}
           </span>
