@@ -11,9 +11,9 @@ export default async function EventRatingSummary({ eventId }: { eventId: string 
 
   if (!list.length) {
     return (
-      <p className="text-gray-400 text-sm">
+      <p className="text-muted-foreground text-sm">
         No reviews yet.{" "}
-        <Link href="#event-reviews" className="text-amber-400 hover:underline">
+        <Link href="#event-reviews" className="text-primary hover:underline">
           Be the first to review
         </Link>
         .
@@ -25,13 +25,13 @@ export default async function EventRatingSummary({ eventId }: { eventId: string 
 
   return (
     <div className="flex flex-wrap items-center gap-2 text-sm">
-      <span className="text-amber-400 font-bold text-lg">{avg.toFixed(1)}</span>
-      <span className="text-yellow-500">★</span>
-      <span className="text-gray-400">
+      <span className="text-primary font-bold text-lg">{avg.toFixed(1)}</span>
+      <span className="text-primary">★</span>
+      <span className="text-muted-foreground">
         {list.length} review{list.length === 1 ? "" : "s"}
       </span>
-      <span className="text-gray-500">·</span>
-      <Link href="#event-reviews" className="text-amber-400 hover:underline font-medium">
+      <span className="text-muted-foreground">·</span>
+      <Link href="#event-reviews" className="text-primary hover:underline font-medium">
         Read all reviews
       </Link>
     </div>

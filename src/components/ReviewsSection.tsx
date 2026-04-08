@@ -92,19 +92,19 @@ export default function ReviewsSection({
   };
 
   return (
-    <div id="event-reviews" className="mt-12 space-y-8 scroll-mt-24 animate-fade-in">
-      <h2 className="text-3xl font-bold text-yellow-400">Reviews & ratings</h2>
-      <p className="text-gray-400 text-sm -mt-4">
+    <div id="event-reviews" className="space-y-8 scroll-mt-24 animate-fade-in">
+      <h2 className="text-3xl font-bold text-foreground">Reviews & ratings</h2>
+      <p className="text-muted-foreground text-sm -mt-4">
         Everyone sees reviews here. Your own reviews also appear under Dashboard → My reviews.
       </p>
       
       {isLogged ? (
-        <form onSubmit={handleSubmit} className="bg-gray-800 p-6 rounded-2xl shadow-xl space-y-4">
+        <form onSubmit={handleSubmit} className="bg-background p-6 rounded-2xl border border-border shadow-sm space-y-4">
           <h3 className="text-xl font-semibold mb-2">Leave a Review</h3>
           <div className="flex gap-4 items-center">
-            <span className="text-sm text-gray-400">Rating (1-5):</span>
+            <span className="text-sm text-muted-foreground">Rating (1-5):</span>
             <Select value={rating} onValueChange={setRating}>
-              <SelectTrigger className="w-[100px] bg-gray-900 border-gray-700">
+              <SelectTrigger className="w-[100px]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -116,34 +116,34 @@ export default function ReviewsSection({
             placeholder="Write your review here..."
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            className="bg-gray-900 border-gray-700 min-h-[100px]"
+            className="min-h-[100px]"
           />
           <Button type="submit" disabled={loading} className="w-full sm:w-auto">
             {loading ? "Submitting..." : "Submit Review"}
           </Button>
         </form>
       ) : (
-        <p className="text-gray-400">Please log in to leave a review.</p>
+        <p className="text-muted-foreground">Please log in to leave a review.</p>
       )}
 
       <div className="space-y-4">
         {reviews.length === 0 ? (
-          <p className="text-gray-400">No reviews yet. Be the first!</p>
+          <p className="text-muted-foreground">No reviews yet. Be the first!</p>
         ) : (
           reviews.map(r => (
-            <div key={r.id} className="bg-gray-800 p-6 rounded-xl border border-gray-700 flex gap-4">
+            <div key={r.id} className="bg-background p-6 rounded-xl border border-border flex gap-4">
               <ReviewUserAvatar name={r.user.name} image={r.user.image} />
               <div className="flex-1">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h4 className="font-semibold text-gray-100">{r.user.name}</h4>
-                    <p className="text-sm text-gray-400">{new Date(r.createdAt).toLocaleDateString()}</p>
+                    <h4 className="font-semibold text-foreground">{r.user.name}</h4>
+                    <p className="text-sm text-muted-foreground">{new Date(r.createdAt).toLocaleDateString()}</p>
                   </div>
-                  <div className="text-yellow-500 font-bold">
+                  <div className="text-primary font-bold">
                     {r.rating}/5 ⭐️
                   </div>
                 </div>
-                <p className="mt-2 text-gray-300">{r.comment}</p>
+                <p className="mt-2 text-muted-foreground">{r.comment}</p>
               </div>
             </div>
           ))

@@ -9,6 +9,7 @@ import EventRatingSummary from "@/components/EventRatingSummary";
 import StripePaymentConfirmClient from "@/components/StripePaymentConfirmClient";
 import { userService } from "@/services/user.services";
 import { getForwardedCookieHeader } from "@/lib/get-cookie-header";
+import EventCard from "@/app/(CommonLayout)/_components/event/FeaturedEventCard";
 
 type Event = {
   id: string;
@@ -21,6 +22,9 @@ type Event = {
   type?: string;
   fee?: number | null;
   ownerId?: string;
+  image?: string | null;
+  banner?: string | null;
+  gallery?: string[] | null;
 };
 
 const EventDetailsPage = async ({
@@ -47,23 +51,19 @@ const EventDetailsPage = async ({
     cache: "no-store",
     headers: { Cookie: cookieHeader },
   });
-
   const payload = await res.json();
   const event: Event | null = res.ok && payload?.success !== false ? payload?.data ?? null : null;
 
   if (!event) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-900 text-gray-400">
+      <div className="min-h-screen flex items-center justify-center bg-background text-muted-foreground">
         <div className="text-center max-w-md mx-auto">
           <p className="mb-4 text-lg">
             {res.status === 403 || res.status === 401
               ? "This is a private event. Sign in with an invited account to view it."
               : "Event not found"}
           </p>
-          <Link
-            href="/events"
-            className="text-yellow-500 hover:underline inline-flex items-center gap-1"
-          >
+          <Link href="/events" className="text-primary hover:underline inline-flex items-center gap-1">
             <ChevronLeft size={18} /> Back to Events
           </Link>
         </div>
@@ -74,6 +74,15 @@ const EventDetailsPage = async ({
   const { data: sessionData } = await userService.getSession();
   const currentUser = sessionData?.user;
   const isOwner = currentUser?.id === event.ownerId;
+
+  const media: string[] = Array.from(
+    new Set(
+      [event.image, event.banner, ...(Array.isArray(event.gallery) ? event.gallery : [])].filter(
+        (value): value is string => typeof value === "string" && value.trim().length > 0,
+      ),
+    ),
+  );
+  const mediaItems = media.length ? media : ["/logo.avif", "/logo.avif", "/logo.avif"];
 
   const apiBase = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:5000";
   let paymentConfirmAlreadyRecorded = false;
@@ -137,16 +146,20 @@ const EventDetailsPage = async ({
   }
 
   const showPaidCheckout = paidEvent && !isOwner && participationStatus == null;
+  const relatedRes = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/v1/events?upcoming=true`, {
+    cache: "no-store",
+    headers: { Cookie: cookieHeader },
+  });
+  const relatedJson = await relatedRes.json().catch(() => ({}));
+  const relatedEvents = Array.isArray(relatedJson?.data)
+    ? relatedJson.data.filter((row: Event) => row?.id !== event.id).slice(0, 4)
+    : [];
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100 py-10 px-4">
+    <div className="min-h-screen bg-background text-foreground py-10 px-4">
       <StripePaymentConfirmClient />
-      <div className="max-w-4xl mx-auto">
-        {/* Back Button */}
-        <Link
-          href="/events"
-          className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6"
-        >
+      <div className="max-w-5xl mx-auto">
+        <Link href="/events" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6">
           <ChevronLeft size={18} /> Back
         </Link>
 
@@ -171,25 +184,110 @@ const EventDetailsPage = async ({
             )}
           </div>
         )}
-        
+
         {isCanceled && (
-          <div className="mb-6 bg-red-900/50 border border-red-500 text-red-200 px-4 py-3 rounded-xl">
+          <div className="mb-6 bg-destructive/15 border border-destructive/50 text-destructive px-4 py-3 rounded-xl">
             Payment was canceled. You can try again when you are ready.
           </div>
         )}
 
-        {/* Event Card */}
-        <div className="bg-gray-800 rounded-2xl shadow-xl p-8 space-y-6">
-          <h1 className="text-4xl font-bold text-yellow-400">{event.title}</h1>
-          <div className="py-2">
-            <EventRatingSummary eventId={event.id} />
-          </div>
-          <p className="text-gray-300 text-lg">{event.description || "No description available."}</p>
+        <div className="space-y-8">
+          <section className="rounded-2xl border border-border bg-card p-4 md:p-6">
+            <h2 className="mb-4 text-xl font-semibold">Media</h2>
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+              <div className="md:col-span-2 overflow-hidden rounded-xl border border-border bg-muted">
+                <img src={mediaItems[0]} alt={event.title} className="h-72 w-full object-cover md:h-80" />
+              </div>
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-1">
+                {mediaItems.slice(1, 3).map((src, index) => (
+                  <div key={`${src}-${index}`} className="overflow-hidden rounded-xl border border-border bg-muted">
+                    <img
+                      src={src}
+                      alt={`${event.title} media ${index + 2}`}
+                      className="h-36 w-full object-cover md:h-[9.75rem]"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section className="rounded-2xl border border-border bg-card p-6 md:p-8 space-y-4">
+            <h1 className="text-3xl font-bold md:text-4xl">{event.title}</h1>
+            <div className="py-1">
+              <EventRatingSummary eventId={event.id} />
+            </div>
+            <h2 className="text-xl font-semibold">Description / Overview</h2>
+            <p className="text-muted-foreground text-base leading-relaxed">
+              {event.description || "No description available."}
+            </p>
+          </section>
+
+          <section className="rounded-2xl border border-border bg-card p-6 md:p-8 space-y-5">
+            <h2 className="text-xl font-semibold">Key Information / Specifications</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-foreground">
+              <div className="rounded-lg border border-border bg-background p-4">
+                <p className="font-semibold">Date</p>
+                <p className="text-muted-foreground">
+                  {event.date ? new Date(event.date).toLocaleDateString() : "N/A"}
+                </p>
+              </div>
+              <div className="rounded-lg border border-border bg-background p-4">
+                <p className="font-semibold">Time</p>
+                <p className="text-muted-foreground">{event.time || "N/A"}</p>
+              </div>
+              <div className="rounded-lg border border-border bg-background p-4">
+                <p className="font-semibold">Venue / Link</p>
+                <p className="text-muted-foreground break-all">
+                  {event.venue ||
+                    (event.eventLink ? (
+                      <a href={event.eventLink} className="text-primary hover:underline">
+                        {event.eventLink}
+                      </a>
+                    ) : (
+                      "TBD"
+                    ))}
+                </p>
+              </div>
+              <div className="rounded-lg border border-border bg-background p-4">
+                <p className="font-semibold">Type</p>
+                <p className="text-muted-foreground">{event.type?.replace("_", " ") || "N/A"}</p>
+              </div>
+              <div className="rounded-lg border border-border bg-background p-4">
+                <p className="font-semibold">Fee</p>
+                <p className="text-muted-foreground">
+                  {event.fee != null ? (event.fee > 0 ? `$ ${event.fee}` : "Free") : "N/A"}
+                </p>
+              </div>
+            </div>
+
+            {showPaidCheckout ? (
+              <div className="flex flex-col gap-2">
+                <p className="text-muted-foreground">
+                  This event requires a payment of ${event.fee}. After payment, your request stays pending until the
+                  host approves.
+                </p>
+                <CheckoutButton
+                  eventId={event.id}
+                  fee={event.fee ?? 0}
+                  label={event.type?.startsWith("PRIVATE") ? "Pay & Request" : "Pay & Join"}
+                />
+              </div>
+            ) : (
+              <EventInteractionButton
+                eventId={event.id}
+                type={event.type || "PUBLIC_FREE"}
+                isOwner={isOwner}
+                participationStatus={participationStatus}
+                fee={event.fee || 0}
+              />
+            )}
+          </section>
 
           {isOwner && (
-            <div className="rounded-xl border border-amber-500/50 bg-amber-950/30 p-4 text-sm">
-              <p className="font-semibold text-amber-300 mb-2">You are the host</p>
-              <p className="text-gray-300 mb-3">
+            <section className="rounded-xl border border-amber-500/40 bg-amber-500/10 p-4 text-sm">
+              <p className="font-semibold text-amber-600 dark:text-amber-400 mb-2">You are the host</p>
+              <p className="text-muted-foreground mb-3">
                 See everyone who requested to join, paid and is waiting, or is already approved on the{" "}
                 <strong>join list</strong>.
               </p>
@@ -199,72 +297,25 @@ const EventDetailsPage = async ({
               >
                 Open join list & approvals
               </Link>
-            </div>
+            </section>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-200">
-            <div>
-              <p className="font-semibold">Date</p>
-              <p>{event.date ? new Date(event.date).toLocaleDateString() : "N/A"}</p>
-            </div>
+          {isOwner && <InviteByEmail eventId={event.id} />}
 
-            <div>
-              <p className="font-semibold">Time</p>
-              <p>{event.time || "N/A"}</p>
-            </div>
+          <section className="rounded-2xl border border-border bg-card p-6 md:p-8">
+            <ReviewsSection eventId={event.id} isLogged={!!currentUser} />
+          </section>
 
-            <div>
-              <p className="font-semibold">Venue / Link</p>
-              <p>
-                {event.venue ||
-                  (event.eventLink ? (
-                    <a href={event.eventLink} className="text-amber-400 hover:underline break-all">
-                      {event.eventLink}
-                    </a>
-                  ) : (
-                    "TBD"
-                  ))}
-              </p>
-            </div>
-
-            <div>
-              <p className="font-semibold">Type</p>
-              <p>{event.type?.replace("_", " ") || "N/A"}</p>
-            </div>
-
-            <div>
-              <p className="font-semibold">Fee</p>
-              <p>{event.fee != null ? (event.fee > 0 ? `$ ${event.fee}` : "Free") : "N/A"}</p>
-            </div>
-          </div>
-
-          {/* Participation: paid events only show checkout when not already paid / pending / joined */}
-          {showPaidCheckout ? (
-            <div className="flex flex-col gap-2">
-              <p className="text-gray-400">
-                This event requires a payment of ${event.fee}. After payment, your request stays pending until the host approves.
-              </p>
-              <CheckoutButton
-                eventId={event.id}
-                fee={event.fee ?? 0}
-                label={event.type?.startsWith("PRIVATE") ? "Pay & Request" : "Pay & Join"}
-              />
-            </div>
-          ) : (
-            <EventInteractionButton 
-              eventId={event.id}
-              type={event.type || "PUBLIC_FREE"}
-              isOwner={isOwner}
-              participationStatus={participationStatus}
-              fee={event.fee || 0}
-            />
+          {relatedEvents.length > 0 && (
+            <section className="space-y-4">
+              <h2 className="text-2xl font-semibold">Related Events</h2>
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                {relatedEvents.map((item: Event) => (
+                  <EventCard key={item.id} event={item} />
+                ))}
+              </div>
+            </section>
           )}
-
-          {isOwner && (
-            <InviteByEmail eventId={event.id} />
-          )}
-
-          <ReviewsSection eventId={event.id} isLogged={!!currentUser} />
         </div>
       </div>
     </div>
